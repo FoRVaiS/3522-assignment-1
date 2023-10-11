@@ -5,6 +5,10 @@ import datetime as datetime
 from datetime import timezone
 from math import floor
 
+import pygame
+
+from Window import Window
+
 
 def current_milli_time():
     """
@@ -20,8 +24,14 @@ class Game:
     The game class is responsible for managing the game loop and updating the game state.
     """
 
-    def __init__(self, tickrate):
+    def __init__(self, width, height, tickrate):
+        self.width = width
+        self.height = height
         self.tickrate = tickrate
+
+        pygame.init()
+        self.window = Window(width, height)
+        self.window.registerEvent(pygame.QUIT, lambda event: self.stop())
 
         self.start()
         self.loop(tickrate)
@@ -42,7 +52,7 @@ class Game:
         """
         Update the game.
         """
-        pass
+        self.window.update()
 
     def loop(self, tickrate):
         """
