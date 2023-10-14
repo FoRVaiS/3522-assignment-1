@@ -8,7 +8,7 @@ from Game import Game
 CLI_DESC = "Initialize the snake game."
 
 
-def parse():
+def parse() -> argparse.Namespace:
     """
     Parse command line arguments and apply setting overrides.
     """

@@ -10,7 +10,7 @@ import pygame
 from Window import Window
 
 
-def current_milli_time():
+def current_milli_time() -> float:
     """
     Get the current time in milliseconds.
 
@@ -24,7 +24,7 @@ class Game:
     The game class is responsible for managing the game loop and updating the game state.
     """
 
-    def __init__(self, width, height, tickrate):
+    def __init__(self, width: int, height: int, tickrate: int):
         self.width = width
         self.height = height
         self.tickrate = tickrate
@@ -36,25 +36,25 @@ class Game:
         self.start()
         self.loop(tickrate)
 
-    def start(self):
+    def start(self) -> None:
         """
         Start the game.
         """
         self.isRunning = True
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Stop the game.
         """
         self.isRunning = False
 
-    def update(self):
+    def update(self) -> None:
         """
         Update the game.
         """
         self.window.update()
 
-    def loop(self, tickrate):
+    def loop(self, tickrate: int) -> None:
         """
         Initialize the game loop and performs an update N-tickrate times every second.
 
@@ -62,7 +62,7 @@ class Game:
         """
         ms_per_tick = 1000 / tickrate
         last_time_ms = current_milli_time()
-        delta_time = 0
+        delta_time = 0.0
 
         self.update()
 
