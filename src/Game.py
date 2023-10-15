@@ -10,7 +10,7 @@ import pygame
 from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
-from System import RenderingSystem, KeyboardInputSystem
+from System import RenderingSystem, KeyboardInputSystem, MovementSystem
 from Component import RenderComponent, TransformComponent, PlayerControllerComponent
 from GameObject import Entity
 
@@ -50,6 +50,7 @@ class Game:
 
         self.rendering_system = RenderingSystem(screen, [TransformComponent, RenderComponent])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [PlayerControllerComponent, TransformComponent])
+        self.movement_system = MovementSystem([TransformComponent])
 
         self.start()
         self.loop(tickrate)
@@ -73,13 +74,16 @@ class Game:
         objects = self.world.get_game_objects()
 
         self.rendering_system.process(objects)
-        self.keyboard_input_system.process(objects)
+        self.movement_system.process(objects)
         self.window.update()
 
     def onImmediateUpdate(self) -> None:
         """
         Run an update immediately.
         """
+        objects = self.world.get_game_objects()
+
+        self.keyboard_input_system.process(objects)
         self.pg_event_manager.update()
 
     def loop(self, tickrate: int) -> None:

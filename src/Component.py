@@ -31,6 +31,8 @@ class TransformComponent(PositionComponent):
         self.width = width
         self.height = height
 
+        self.vel_x = 0
+        self.vel_y = 0
 
 
 class PlayerControllerComponent(Component):
