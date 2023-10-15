@@ -67,6 +67,7 @@ class Game:
         self.update()
 
         while (self.isRunning):
+            self.window.process_window_events()
             now = current_milli_time()
             delta_time = now - last_time_ms
 

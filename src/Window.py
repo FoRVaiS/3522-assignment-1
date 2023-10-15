@@ -28,11 +28,14 @@ class Window:
         """
         Update the game window.
         """
-        # Handle pygame events
+        # Update the game window
+        pygame.display.update()
+
+    def process_window_events(self) -> None:
+        """
+        Process pygame events.
+        """
         for event in pygame.event.get():
             for pygameEvent, callback in self.events:
                 if event.type == pygameEvent:
                     callback(event)
-
-        # Update the game window
-        pygame.display.update()
