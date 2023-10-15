@@ -11,7 +11,7 @@ from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
 from System import RenderingSystem
-from Component import RenderComponent, PositionComponent
+from Component import RenderComponent, PositionComponent, PlayerControllerComponent
 from GameObject import Entity
 
 
@@ -45,6 +45,7 @@ class Game:
         self.world = World()
 
         self.player = Entity(200, 0)
+        self.player.add_component(PlayerControllerComponent(3))
         self.world.add_game_object(self.player)
 
         self.rendering_system = RenderingSystem(screen, [PositionComponent, RenderComponent])

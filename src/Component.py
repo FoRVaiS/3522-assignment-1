@@ -33,3 +33,11 @@ class PositionComponent(Component):
 
     def get_position(self) -> tuple[int, int]:
         return (self.x, self.y)
+
+
+class PlayerControllerComponent(Component):
+    def __init__(self, velocity: int):
+        self._velocity = velocity
+
+    def get_velocity(self) -> int:
+        return self._velocity
