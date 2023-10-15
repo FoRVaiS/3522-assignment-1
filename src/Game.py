@@ -10,7 +10,7 @@ import pygame
 from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
-from System import RenderingSystem
+from System import RenderingSystem, KeyboardInputSystem
 from Component import RenderComponent, PositionComponent, PlayerControllerComponent
 from GameObject import Entity
 
@@ -49,6 +49,7 @@ class Game:
         self.world.add_game_object(self.player)
 
         self.rendering_system = RenderingSystem(screen, [PositionComponent, RenderComponent])
+        self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [PlayerControllerComponent, PositionComponent])
 
         self.start()
         self.loop(tickrate)
@@ -69,11 +70,10 @@ class Game:
         """
         Update the game every tick.
         """
-        position_component = self.player.get_component(PositionComponent)
-        if position_component:
-            position_component.move(1, 1)
+        objects = self.world.get_game_objects()
 
-        self.rendering_system.process(self.world.get_game_objects())
+        self.rendering_system.process(objects)
+        self.keyboard_input_system.process(objects)
         self.window.update()
 
     def onImmediateUpdate(self) -> None:
