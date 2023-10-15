@@ -73,8 +73,8 @@ class Game:
         """
         objects = self.world.get_game_objects()
 
-        self.rendering_system.process(objects)
         self.movement_system.process(objects)
+        self.rendering_system.process(objects)
         self.window.update()
 
     def onImmediateUpdate(self) -> None:
