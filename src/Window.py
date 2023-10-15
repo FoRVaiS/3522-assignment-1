@@ -31,6 +31,9 @@ class Window:
         # Update the game window
         pygame.display.update()
 
+        # Clear the game window
+        self.window.fill((0, 0, 0))
+
     def process_window_events(self) -> None:
         """
         Process pygame events.
