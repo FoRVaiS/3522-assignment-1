@@ -5,7 +5,7 @@ import pygame
 
 from PygameEventManager import PygameEventManager
 from GameObject import GameObject
-from Component import Component, RenderComponent, TransformComponent, PlayerControllerComponent
+from Component import Component, RenderComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
 
 
 class System(ABC):
@@ -45,6 +45,30 @@ class MovementSystem(System):
             if transform_component:
                 transform_component.x += transform_component.vel_x * transform_component.width
                 transform_component.y += transform_component.vel_y * transform_component.height
+
+
+class AiFollowSystem(System):
+    def process(self, game_objects: List[GameObject]) -> None:
+        for entity in self._filter_objects(game_objects):
+            ai_component = entity.get_component(AiFollowComponent)
+
+            if ai_component and ai_component.target:
+                follower_transform_component = entity.get_component(TransformComponent)
+                target_transform_component = ai_component.target.get_component(TransformComponent)
+
+                if follower_transform_component and target_transform_component:
+                    # Get the follower coordinates
+                    follower_x, follower_y = follower_transform_component.x, follower_transform_component.y
+
+                    # Get the target coordinates
+                    target_x, target_y = target_transform_component.x, target_transform_component.y
+
+                    # Calculate the x_dir and y_dir difference between the follower and target
+                    x_dir = max(min(target_x - follower_x, 1), -1)
+                    y_dir = max(min(target_y - follower_y, 1), -1)
+
+                    follower_transform_component.vel_x = x_dir
+                    follower_transform_component.vel_y = y_dir
 
 
 class KeyboardInputSystem(System):

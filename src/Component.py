@@ -37,3 +37,8 @@ class TransformComponent(PositionComponent):
 
 class PlayerControllerComponent(Component):
     pass
+
+
+class AiFollowComponent(Component):
+    def __init__(self, game_object) -> None:
+        self.target = game_object

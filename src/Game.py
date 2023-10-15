@@ -10,8 +10,8 @@ import pygame
 from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
-from System import RenderingSystem, KeyboardInputSystem, MovementSystem
-from Component import RenderComponent, TransformComponent, PlayerControllerComponent
+from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem
+from Component import RenderComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
 from GameObject import Entity
 
 
@@ -48,9 +48,18 @@ class Game:
         self.player.add_component(PlayerControllerComponent())
         self.world.add_game_object(self.player)
 
+        self.segment = Entity(x=200, y=0, width=32, height=32)
+        self.segment.add_component(AiFollowComponent(self.player))
+        self.world.add_game_object(self.segment)
+
+        self.segment2 = Entity(x=200, y=0, width=32, height=32)
+        self.segment2.add_component(AiFollowComponent(self.segment))
+        self.world.add_game_object(self.segment2)
+
         self.rendering_system = RenderingSystem(screen, [TransformComponent, RenderComponent])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [PlayerControllerComponent, TransformComponent])
         self.movement_system = MovementSystem([TransformComponent])
+        self.follow_system = AiFollowSystem([AiFollowComponent, TransformComponent])
 
         self.start()
         self.loop(tickrate)
@@ -74,6 +83,7 @@ class Game:
         objects = self.world.get_game_objects()
 
         self.movement_system.process(objects)
+        self.follow_system.process(objects)
         self.rendering_system.process(objects)
         self.window.update()
 
