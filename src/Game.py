@@ -48,11 +48,18 @@ class Game:
         """
         self.isRunning = False
 
-    def update(self) -> None:
+    def onTick(self) -> None:
         """
-        Update the game.
+        Update the game every tick.
         """
         self.window.update()
+
+    def onImmediateUpdate(self) -> None:
+        """
+        Run an update immediately.
+        """
+        self.window.process_window_events()
+
 
     def loop(self, tickrate: int) -> None:
         """
@@ -64,13 +71,14 @@ class Game:
         last_time_ms = current_milli_time()
         delta_time = 0.0
 
-        self.update()
+        self.onTick()
 
         while (self.isRunning):
-            self.window.process_window_events()
+            self.onImmediateUpdate()
+
             now = current_milli_time()
             delta_time = now - last_time_ms
 
             if (delta_time >= ms_per_tick):
-                self.update()
+                self.onTick()
                 last_time_ms += ms_per_tick
