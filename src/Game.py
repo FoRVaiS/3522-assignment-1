@@ -11,7 +11,7 @@ from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
 from System import RenderingSystem, KeyboardInputSystem
-from Component import RenderComponent, PositionComponent, PlayerControllerComponent
+from Component import RenderComponent, TransformComponent, PlayerControllerComponent
 from GameObject import Entity
 
 
@@ -44,12 +44,12 @@ class Game:
 
         self.world = World()
 
-        self.player = Entity(200, 0)
+        self.player = Entity(x=200, y=0, width=32, height=32)
         self.player.add_component(PlayerControllerComponent(3))
         self.world.add_game_object(self.player)
 
-        self.rendering_system = RenderingSystem(screen, [PositionComponent, RenderComponent])
-        self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [PlayerControllerComponent, PositionComponent])
+        self.rendering_system = RenderingSystem(screen, [TransformComponent, RenderComponent])
+        self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [PlayerControllerComponent, TransformComponent])
 
         self.start()
         self.loop(tickrate)

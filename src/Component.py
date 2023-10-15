@@ -21,18 +21,15 @@ class RenderComponent(Component):
 
 class PositionComponent(Component):
     def __init__(self, x: int, y: int) -> None:
-        self.set_position(x, y)
-
-    def move(self, x: int, y: int) -> None:
-        self.x += x
-        self.y += y
-
-    def set_position(self, x: int, y: int) -> None:
         self.x = x
         self.y = y
 
-    def get_position(self) -> tuple[int, int]:
-        return (self.x, self.y)
+
+class TransformComponent(PositionComponent):
+    def __init__(self, x: int, y: int, width: int, height: int) -> None:
+        super().__init__(x, y)
+        self.width = width
+        self.height = height
 
 
 class PlayerControllerComponent(Component):

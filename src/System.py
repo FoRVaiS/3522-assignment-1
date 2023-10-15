@@ -5,7 +5,7 @@ import pygame
 
 from PygameEventManager import PygameEventManager
 from GameObject import GameObject
-from Component import Component, RenderComponent, PositionComponent, PlayerControllerComponent
+from Component import Component, RenderComponent, TransformComponent, PlayerControllerComponent
 
 
 class System(ABC):
@@ -29,11 +29,11 @@ class RenderingSystem(System):
 
     def process(self, game_objects: List[GameObject]) -> None:
         for entity in self._filter_objects(game_objects):
-            position_component = entity.get_component(PositionComponent)
+            transform_component = entity.get_component(TransformComponent)
             render_component = entity.get_component(RenderComponent)
 
-            if position_component and render_component:
-                x, y = position_component.get_position()
+            if transform_component and render_component:
+                x, y = transform_component.x, transform_component.y
                 render_component.draw(self.screen, x, y)
 
 
@@ -67,17 +67,22 @@ class KeyboardInputSystem(System):
         for keyCode in self.keyMap.keys():
             for entity in self._filter_objects(game_objects):
                 controller = entity.get_component(PlayerControllerComponent)
-                position_component = entity.get_component(PositionComponent)
+                transform_component = entity.get_component(TransformComponent)
 
-                if controller and position_component:
+                if controller and transform_component:
+                    x_dir, y_dir = 0, 0
+
                     if keyCode == pygame.K_w:
-                        position_component.move(0 * controller.get_velocity(), -1 * controller.get_velocity())
+                        y_dir += -1
 
                     if keyCode == pygame.K_s:
-                        position_component.move(0 * controller.get_velocity(), 1 * controller.get_velocity())
+                        y_dir += 1
 
                     if keyCode == pygame.K_a:
-                        position_component.move(-1 * controller.get_velocity(), 0 * controller.get_velocity())
+                        x_dir += -1
 
                     if keyCode == pygame.K_d:
-                        position_component.move(1 * controller.get_velocity(), 0 * controller.get_velocity())
+                        x_dir += 1
+
+                    transform_component.x += x_dir * controller.get_velocity()
+                    transform_component.y += y_dir * controller.get_velocity()

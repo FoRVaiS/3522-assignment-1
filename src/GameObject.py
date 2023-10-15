@@ -2,7 +2,7 @@ from typing import Dict, Type, TypeVar, Optional
 from abc import ABC
 
 # Types
-from Component import Component, PositionComponent, RenderComponent
+from Component import Component, TransformComponent, RenderComponent
 
 ComponentType = TypeVar("ComponentType", bound=Component)
 
@@ -32,11 +32,11 @@ class GameObject(ABC):
 
 
 class Entity(GameObject):
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int, y: int, width: int, height: int) -> None:
         self.components: Dict[Type[Component], Component] = {}
 
-        self.position_component = PositionComponent(x, y)
-        self.render_component = RenderComponent(32, 32)
+        self.transform_component = TransformComponent(x, y, width, height)
+        self.render_component = RenderComponent(width, height)
 
-        self.add_component(self.position_component)
+        self.add_component(self.transform_component)
         self.add_component(self.render_component)
