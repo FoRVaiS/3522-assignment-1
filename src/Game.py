@@ -8,6 +8,7 @@ from math import floor
 import pygame
 
 from Window import Window
+from World import World
 
 
 def current_milli_time() -> float:
@@ -32,6 +33,8 @@ class Game:
         pygame.init()
         self.window = Window(width, height)
         self.window.registerEvent(pygame.QUIT, lambda event: self.stop())
+
+        self.world = World()
 
         self.start()
         self.loop(tickrate)
@@ -59,7 +62,6 @@ class Game:
         Run an update immediately.
         """
         self.window.process_window_events()
-
 
     def loop(self, tickrate: int) -> None:
         """
