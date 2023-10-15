@@ -34,15 +34,6 @@ class Window:
         # Clear the game window
         self.window.fill((0, 0, 0))
 
-    def process_window_events(self) -> None:
-        """
-        Process pygame events.
-        """
-        for event in pygame.event.get():
-            for pygameEvent, callback in self.events:
-                if event.type == pygameEvent:
-                    callback(event)
-
     def get_surface(self) -> pygame.Surface:
         """
         Get the surface of the game window.

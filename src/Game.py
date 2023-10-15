@@ -7,6 +7,7 @@ from math import floor
 
 import pygame
 
+from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
 from System import RenderingSystem
@@ -34,8 +35,10 @@ class Game:
         self.tickrate = tickrate
 
         pygame.init()
+        self.pg_event_manager = PygameEventManager()
+
         self.window = Window(width, height)
-        self.window.registerEvent(pygame.QUIT, lambda event: self.stop())
+        self.pg_event_manager.subscribe(pygame.QUIT, lambda event: self.stop())
 
         screen = self.window.get_surface()
 
@@ -76,7 +79,7 @@ class Game:
         """
         Run an update immediately.
         """
-        self.window.process_window_events()
+        self.pg_event_manager.update()
 
     def loop(self, tickrate: int) -> None:
         """
