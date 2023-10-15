@@ -84,5 +84,5 @@ class KeyboardInputSystem(System):
                     if keyCode == pygame.K_d:
                         x_dir += 1
 
-                    transform_component.x += x_dir * controller.get_velocity()
-                    transform_component.y += y_dir * controller.get_velocity()
+                    transform_component.x += x_dir
+                    transform_component.y += y_dir

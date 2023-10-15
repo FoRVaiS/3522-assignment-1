@@ -45,7 +45,7 @@ class Game:
         self.world = World()
 
         self.player = Entity(x=200, y=0, width=32, height=32)
-        self.player.add_component(PlayerControllerComponent(3))
+        self.player.add_component(PlayerControllerComponent())
         self.world.add_game_object(self.player)
 
         self.rendering_system = RenderingSystem(screen, [TransformComponent, RenderComponent])

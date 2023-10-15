@@ -32,9 +32,6 @@ class TransformComponent(PositionComponent):
         self.height = height
 
 
-class PlayerControllerComponent(Component):
-    def __init__(self, velocity: int):
-        self._velocity = velocity
 
-    def get_velocity(self) -> int:
-        return self._velocity
+class PlayerControllerComponent(Component):
+    pass
