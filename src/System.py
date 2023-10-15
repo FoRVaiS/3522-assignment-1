@@ -94,5 +94,7 @@ class KeyboardInputSystem(System):
                     if keyCode == pygame.K_d:
                         x_dir += 1
 
-                    transform_component.vel_x = x_dir
-                    transform_component.vel_y = y_dir
+                    # Prevent the player from turning back on itself
+                    if x_dir != -transform_component.vel_x or y_dir != -transform_component.vel_y:
+                        transform_component.vel_x = x_dir
+                        transform_component.vel_y = y_dir
