@@ -42,3 +42,9 @@ class Window:
             for pygameEvent, callback in self.events:
                 if event.type == pygameEvent:
                     callback(event)
+
+    def get_surface(self) -> pygame.Surface:
+        """
+        Get the surface of the game window.
+        """
+        return self.window
