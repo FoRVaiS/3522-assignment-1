@@ -9,6 +9,9 @@ import pygame
 
 from Window import Window
 from World import World
+from System import RenderingSystem
+from Component import RenderComponent, PositionComponent
+from GameObject import Entity
 
 
 def current_milli_time() -> float:
@@ -34,7 +37,14 @@ class Game:
         self.window = Window(width, height)
         self.window.registerEvent(pygame.QUIT, lambda event: self.stop())
 
+        screen = self.window.get_surface()
+
         self.world = World()
+
+        self.player = Entity(200, 0)
+        self.world.add_game_object(self.player)
+
+        self.rendering_system = RenderingSystem(screen, [PositionComponent, RenderComponent])
 
         self.start()
         self.loop(tickrate)
@@ -55,6 +65,11 @@ class Game:
         """
         Update the game every tick.
         """
+        position_component = self.player.get_component(PositionComponent)
+        if position_component:
+            position_component.move(1, 1)
+
+        self.rendering_system.process(self.world.get_game_objects())
         self.window.update()
 
     def onImmediateUpdate(self) -> None:
