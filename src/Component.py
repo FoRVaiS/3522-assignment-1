@@ -27,15 +27,10 @@ class FoodSpriteComponent(Component):
         pygame.draw.circle(screen, (255, 0, 0), (x + self.radius * 2, y + self.radius * 2), radius=self.radius)
 
 
-class PositionComponent(Component):
-    def __init__(self, x: int, y: int) -> None:
+class TransformComponent(Component):
+    def __init__(self, x: int, y: int, width: int, height: int) -> None:
         self.x = x
         self.y = y
-
-
-class TransformComponent(PositionComponent):
-    def __init__(self, x: int, y: int, width: int, height: int) -> None:
-        super().__init__(x, y)
         self.width = width
         self.height = height
 
