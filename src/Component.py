@@ -16,7 +16,7 @@ class SnakeSpriteComponent(Component):
         square_rect = pygame.Rect(x, y, self.width, self.height)
 
         # Draw the square on the screen with the specified color
-        pygame.draw.rect(screen, (255, 255, 255), square_rect)
+        pygame.draw.rect(screen, (255, 255, 255), square_rect, 1)
 
 
 class FoodSpriteComponent(Component):
