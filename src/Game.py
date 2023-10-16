@@ -12,7 +12,7 @@ from Window import Window
 from World import World
 from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem
 from Component import RenderComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
-from GameObject import Entity
+from GameObject import Snake
 
 
 def current_milli_time() -> float:
@@ -44,17 +44,10 @@ class Game:
 
         self.world = World()
 
-        self.player = Entity(x=200, y=0, width=32, height=32)
+        self.player = Snake(length=2)
         self.player.add_component(PlayerControllerComponent())
-        self.world.add_game_object(self.player)
-
-        self.segment = Entity(x=200, y=0, width=32, height=32)
-        self.segment.add_component(AiFollowComponent(self.player))
-        self.world.add_game_object(self.segment)
-
-        self.segment2 = Entity(x=200, y=0, width=32, height=32)
-        self.segment2.add_component(AiFollowComponent(self.segment))
-        self.world.add_game_object(self.segment2)
+        for segment in self.player.get_segments():
+            self.world.add_game_object(segment)
 
         self.rendering_system = RenderingSystem(screen, [TransformComponent, RenderComponent])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [PlayerControllerComponent, TransformComponent])

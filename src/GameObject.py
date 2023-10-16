@@ -1,8 +1,8 @@
-from typing import Dict, Type, TypeVar, Optional
+from typing import Dict, Type, TypeVar, Optional, List
 from abc import ABC
 
 # Types
-from Component import Component, TransformComponent, RenderComponent
+from Component import Component, TransformComponent, RenderComponent, AiFollowComponent
 
 ComponentType = TypeVar("ComponentType", bound=Component)
 
@@ -40,3 +40,29 @@ class Entity(GameObject):
 
         self.add_component(self.transform_component)
         self.add_component(self.render_component)
+
+
+class Snake(Entity):
+    def __init__(self, length: int) -> None:
+        super().__init__(0, 0, 32, 32)
+
+        self._segments = [self]
+        self._tail = self
+
+        for i in range(length):
+            self.add_segment()
+
+    def add_segment(self) -> Entity:
+        x, y = self._tail.transform_component.x, self._tail.transform_component.y
+        width, height = self._tail.transform_component.width, self._tail.transform_component.height
+
+        segment = Entity(x, y, width, height)
+        segment.add_component(AiFollowComponent(self._tail))
+
+        self._segments.append(segment)
+        self._tail = segment
+
+        return segment
+
+    def get_segments(self) -> List[Entity]:
+        return self._segments
