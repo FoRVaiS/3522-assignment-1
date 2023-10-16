@@ -42,6 +42,18 @@ class PhysicsBodyComponent(Component):
         self.x_dir = 0
         self.y_dir = 0
 
+        self.handlers = {}
+
+    def add_collision_handler(self, game_object_type, handler):
+        if self.handlers.get(game_object_type) is None:
+            self.handlers[game_object_type] = []
+        self.handlers[game_object_type].append(handler)
+
+    def on_collision(self, game_object):
+        if self.handlers.get(type(game_object)) is not None:
+            for handler in self.handlers[type(game_object)]:
+                handler(game_object)
+
 
 class PlayerControllerComponent(Component):
     pass

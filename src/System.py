@@ -132,3 +132,119 @@ class KeyboardInputSystem(System):
                     if x_dir != -physics_body_component.x_dir or y_dir != -physics_body_component.y_dir:
                         physics_body_component.x_dir = x_dir
                         physics_body_component.y_dir = y_dir
+
+
+class CollisionSystem(System):
+    def __init__(self, component_lists: List[List[Type[Component]]]):
+        super().__init__(component_lists)
+
+    def detect_x_collision(self, entTransform: GameObject, otherTransform: GameObject) -> bool:
+        entX, entWidth = entTransform.x, entTransform.width
+        otherX, otherWidth = otherTransform.x, otherTransform.width
+
+        entLeft = entX
+        entRight = entX + entWidth
+
+        otherEntLeft = otherX
+        otherEntRight = otherX + otherWidth
+
+        hasLeftIntersection = entLeft <= otherEntLeft and entLeft >= otherEntLeft
+        hasRightIntersection = entRight <= otherEntRight and entRight >= otherEntRight
+
+        return hasLeftIntersection or hasRightIntersection
+
+    def detect_y_collision(self, entTransform: TransformComponent, otherTransform: TransformComponent) -> bool:
+        entY, entHeight = entTransform.y, entTransform.height
+        otherY, otherHeight = otherTransform.y, otherTransform.height
+
+        entTop = entY
+        entBottom = entY + entHeight
+
+        otherEntTop = otherY
+        otherEntBottom = otherY + otherHeight
+
+        hasTopIntersection = entTop <= otherEntTop and entTop >= otherEntTop
+        hasBottomIntersection = entBottom <= otherEntBottom and entBottom >= otherEntBottom
+
+        return hasTopIntersection or hasBottomIntersection
+
+    def partition(self, game_objects: List[GameObject]) -> List[List[GameObject]]:
+        filtered_entities = self._filter_objects(game_objects)
+        filtered_entities.sort(key=lambda entity: entity.get_component(TransformComponent).x)
+
+        # Partition all possible collisions into their own groups
+        collision_groups: List[List[GameObject]] = []
+        current_group: List[GameObject] = []
+
+        for entity in filtered_entities:
+            if len(current_group) > 0:
+                last_entity = current_group[-1]
+
+                entTransform = entity.get_component(TransformComponent)
+                otherTransform = last_entity.get_component(TransformComponent)
+
+                if entTransform and otherTransform:
+                    if not self.detect_x_collision(entTransform, otherTransform):
+                        collision_groups.append(current_group)
+                        current_group = []
+
+            current_group.append(entity)
+
+        collision_groups.append(current_group)
+
+        return collision_groups
+
+    def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Given a list of game objects, we want to partition them into a list of
+        potentionally colliding groups (2D List), iterate through each group, and
+        check that all possible pairs of entities are actually colliding by
+        determining if they are also vertically colliding.
+
+        In our partitioning algorithm, we already check that all entities in a
+        group are colliding on the x axis, hence why we only need to check if they
+        are colliding on the y axis.
+
+        If a pair is determined to be colliding, we trigger ...?
+
+        Given a set of 4 elements in a partition group: [0, 1, 2, 3], all possible
+        combinations are:
+        - [0, 1]
+        - [0, 2]
+        - [0, 3]
+        - [1, 2]
+        - [1, 3]
+        - [2, 3]
+
+        We will use two indices, a base index and a sub index.
+        The base index will always start from the beginning of the list, but the sub
+        index will always begin one more element ahead of the base index.
+
+        - The base index will only increment once the sub index has reached the end
+        of the list.
+        - The base index will not increment past the penultimate element.
+        - The sub index will iterate through the entire list, resetting to one
+        index ahead of the base index once the base index has incremented.
+        """
+        possible_collisions = self.partition(game_objects)
+        print("Possible collisions:", possible_collisions)
+
+        for x_group in possible_collisions:
+            for base_index in range(len(x_group) - 1):
+                for sub_index in range(base_index + 1, len(x_group)):
+                    # Select a unique pair of entities.
+                    ent = x_group[base_index]
+                    other = x_group[sub_index]
+
+                    ent_phys_body_component = ent.get_component(PhysicsBodyComponent)
+                    other_phys_body_component = other.get_component(PhysicsBodyComponent)
+
+                    ent_transform_component = ent.get_component(TransformComponent)
+                    other_transform_component = other.get_component(TransformComponent)
+
+                    # Check if the pair of entities are colliding on the y axis ...
+                    if self.detect_y_collision(ent_transform_component, other_transform_component) and ent_phys_body_component and other_phys_body_component:
+                        # ... and if they are, trigger their on_collision methods and pass the entity
+                        # they collided with.
+                        ent_phys_body_component.on_collision(other)
+                        other_phys_body_component.on_collision(ent)

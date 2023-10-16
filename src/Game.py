@@ -10,7 +10,7 @@ import pygame
 from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
-from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem
+from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem
 from Component import SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
 from GameObject import Snake, Food
 
@@ -55,6 +55,8 @@ class Game:
         self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent], [TransformComponent, FoodSpriteComponent]])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
         self.movement_system = MovementSystem(32, [[TransformComponent, PhysicsBodyComponent]])
+        self.collisions_system = CollisionSystem([[PhysicsBodyComponent, TransformComponent]])
+
         self.follow_system = AiFollowSystem([[AiFollowComponent, TransformComponent]])
 
         self.start()
@@ -80,6 +82,7 @@ class Game:
 
         self.movement_system.process(objects)
         self.follow_system.process(objects)
+        self.collisions_system.process(objects)
         self.rendering_system.process(objects)
         self.window.update()
 
