@@ -2,7 +2,7 @@ from typing import Dict, Type, TypeVar, Optional, List
 from abc import ABC
 
 # Types
-from Component import Component, TransformComponent, AiFollowComponent, SnakeSpriteComponent
+from Component import Component, TransformComponent, AiFollowComponent, SnakeSpriteComponent, FoodSpriteComponent
 
 ComponentType = TypeVar("ComponentType", bound=Component)
 
@@ -65,3 +65,10 @@ class Snake(Entity):
 
     def get_segments(self) -> List[Entity]:
         return self._segments
+
+
+class Food(Entity):
+    def __init__(self, x: int, y: int) -> None:
+        super().__init__(x, y, 32, 32)
+        self.sprite_component = FoodSpriteComponent(8)
+        self.add_component(self.sprite_component)

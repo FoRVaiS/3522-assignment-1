@@ -19,6 +19,14 @@ class SnakeSpriteComponent(Component):
         pygame.draw.rect(screen, (255, 255, 255), square_rect)
 
 
+class FoodSpriteComponent(Component):
+    def __init__(self, radius: int):
+        self.radius = radius
+
+    def draw(self, screen: pygame.Surface, x: int, y: int) -> None:
+        pygame.draw.circle(screen, (255, 0, 0), (x + self.radius * 2, y + self.radius * 2), radius=self.radius)
+
+
 class PositionComponent(Component):
     def __init__(self, x: int, y: int) -> None:
         self.x = x

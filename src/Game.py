@@ -11,8 +11,8 @@ from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
 from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem
-from Component import SnakeSpriteComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
-from GameObject import Snake
+from Component import SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
+from GameObject import Snake, Food
 
 
 def current_milli_time() -> float:
@@ -49,7 +49,10 @@ class Game:
         for segment in self.player.get_segments():
             self.world.add_game_object(segment)
 
-        self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent]])
+        self.food = Food(128, 128)
+        self.world.add_game_object(self.food)
+
+        self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent], [TransformComponent, FoodSpriteComponent]])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, TransformComponent]])
         self.movement_system = MovementSystem(32, [[TransformComponent]])
         self.follow_system = AiFollowSystem([[AiFollowComponent, TransformComponent]])
