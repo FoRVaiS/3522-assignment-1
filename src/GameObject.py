@@ -36,15 +36,14 @@ class Entity(GameObject):
         self.components: Dict[Type[Component], Component] = {}
 
         self.transform_component = TransformComponent(x, y, width, height)
-        self.render_component = RenderComponent(width, height)
-
         self.add_component(self.transform_component)
-        self.add_component(self.render_component)
 
 
 class Snake(Entity):
     def __init__(self, length: int) -> None:
         super().__init__(0, 0, 32, 32)
+        self.render_component = RenderComponent(self.transform_component.width, self.transform_component.height)
+        self.add_component(self.render_component)
 
         self._segments = [self]
         self._tail = self
