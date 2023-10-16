@@ -24,8 +24,8 @@ class System(ABC):
 
 
 class RenderingSystem(System):
-    def __init__(self, screen: pygame.Surface, component_types: List[Type[Component]]):
-        super().__init__(component_types)
+    def __init__(self, screen: pygame.Surface, component_lists: List[List[Type[Component]]]):
+        super().__init__(component_lists)
         self.screen = screen
 
     def process(self, game_objects: List[GameObject]) -> None:
@@ -39,8 +39,8 @@ class RenderingSystem(System):
 
 
 class MovementSystem(System):
-    def __init__(self, scale_factor: int, component_types: List[Type[Component]]):
-        super().__init__(component_types)
+    def __init__(self, scale_factor: int, component_lists: List[List[Type[Component]]]):
+        super().__init__(component_lists)
         self.scale_factor = scale_factor
 
     def process(self, game_objects: List[GameObject]) -> None:
@@ -77,8 +77,8 @@ class AiFollowSystem(System):
 
 
 class KeyboardInputSystem(System):
-    def __init__(self, event_manager: PygameEventManager, component_types: List[Type[Component]]):
-        super().__init__(component_types)
+    def __init__(self, event_manager: PygameEventManager, component_lists: List[List[Type[Component]]]):
+        super().__init__(component_lists)
 
         # Tracks all keys that are currently pressed
         self.keyMap: Dict[int, bool] = {}

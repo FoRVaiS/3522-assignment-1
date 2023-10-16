@@ -60,7 +60,7 @@ class Snake(Entity):
 
         return segment
 
-    def get_segments(self) -> List[Entity]:
+    def get_segments(self) -> List['Snake']:
         return self._segments
 
 
