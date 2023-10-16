@@ -35,7 +35,7 @@ class Entity(GameObject):
     def __init__(self, x: int, y: int, width: int, height: int) -> None:
         self.components: Dict[Type[Component], Component] = {}
 
-        self.transform_component = TransformComponent(x, y, width, height)
+        self.transform_component = TransformComponent(x, y, width - 1, height - 1)
         self.add_component(self.transform_component)
 
         self.physics_body_component = PhysicsBodyComponent()
