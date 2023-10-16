@@ -2,7 +2,7 @@ from typing import Dict, Type, TypeVar, Optional, List
 from abc import ABC
 
 # Types
-from Component import Component, TransformComponent, AiFollowComponent, SnakeSpriteComponent, FoodSpriteComponent
+from Component import Component, TransformComponent, PhysicsBodyComponent, AiFollowComponent, SnakeSpriteComponent, FoodSpriteComponent
 
 ComponentType = TypeVar("ComponentType", bound=Component)
 
@@ -37,6 +37,9 @@ class Entity(GameObject):
 
         self.transform_component = TransformComponent(x, y, width, height)
         self.add_component(self.transform_component)
+
+        self.physics_body_component = PhysicsBodyComponent()
+        self.add_component(self.physics_body_component)
 
 
 class Snake(Entity):

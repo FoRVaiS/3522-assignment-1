@@ -34,8 +34,13 @@ class TransformComponent(Component):
         self.width = width
         self.height = height
 
+
+class PhysicsBodyComponent(Component):
+    def __init__(self) -> None:
         self.vel_x = 0
         self.vel_y = 0
+        self.x_dir = 0
+        self.y_dir = 0
 
 
 class PlayerControllerComponent(Component):

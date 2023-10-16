@@ -11,7 +11,7 @@ from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
 from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem
-from Component import SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
+from Component import SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
 from GameObject import Snake, Food
 
 
@@ -53,8 +53,8 @@ class Game:
         self.world.add_game_object(self.food)
 
         self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent], [TransformComponent, FoodSpriteComponent]])
-        self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, TransformComponent]])
-        self.movement_system = MovementSystem(32, [[TransformComponent]])
+        self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
+        self.movement_system = MovementSystem(32, [[TransformComponent, PhysicsBodyComponent]])
         self.follow_system = AiFollowSystem([[AiFollowComponent, TransformComponent]])
 
         self.start()

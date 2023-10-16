@@ -5,7 +5,7 @@ import pygame
 
 from PygameEventManager import PygameEventManager
 from GameObject import GameObject
-from Component import Component, SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
+from Component import Component, SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
 
 
 class System(ABC):
@@ -46,10 +46,14 @@ class MovementSystem(System):
     def process(self, game_objects: List[GameObject]) -> None:
         for entity in self._filter_objects(game_objects):
             transform_component = entity.get_component(TransformComponent)
+            physics_body_component = entity.get_component(PhysicsBodyComponent)
 
-            if transform_component:
-                transform_component.x += transform_component.vel_x * self.scale_factor
-                transform_component.y += transform_component.vel_y * self.scale_factor
+            if transform_component and physics_body_component:
+                physics_body_component.vel_x = physics_body_component.x_dir * self.scale_factor
+                physics_body_component.vel_y = physics_body_component.y_dir * self.scale_factor
+
+                transform_component.x += physics_body_component.vel_x
+                transform_component.y += physics_body_component.vel_y
 
 
 class AiFollowSystem(System):
@@ -58,10 +62,11 @@ class AiFollowSystem(System):
             ai_component = entity.get_component(AiFollowComponent)
 
             if ai_component and ai_component.target:
+                follower_physics_body_component = entity.get_component(PhysicsBodyComponent)
                 follower_transform_component = entity.get_component(TransformComponent)
                 target_transform_component = ai_component.target.get_component(TransformComponent)
 
-                if follower_transform_component and target_transform_component:
+                if follower_transform_component and target_transform_component and follower_physics_body_component:
                     # Get the follower coordinates
                     follower_x, follower_y = follower_transform_component.x, follower_transform_component.y
 
@@ -72,8 +77,8 @@ class AiFollowSystem(System):
                     x_dir = max(min(target_x - follower_x, 1), -1)
                     y_dir = max(min(target_y - follower_y, 1), -1)
 
-                    follower_transform_component.vel_x = x_dir
-                    follower_transform_component.vel_y = y_dir
+                    follower_physics_body_component.x_dir = x_dir
+                    follower_physics_body_component.y_dir = y_dir
 
 
 class KeyboardInputSystem(System):
@@ -106,9 +111,9 @@ class KeyboardInputSystem(System):
         for keyCode in self.keyMap.keys():
             for entity in self._filter_objects(game_objects):
                 controller = entity.get_component(PlayerControllerComponent)
-                transform_component = entity.get_component(TransformComponent)
+                physics_body_component = entity.get_component(PhysicsBodyComponent)
 
-                if controller and transform_component:
+                if controller and physics_body_component:
                     x_dir, y_dir = 0, 0
 
                     if keyCode == pygame.K_w:
@@ -124,6 +129,6 @@ class KeyboardInputSystem(System):
                         x_dir += 1
 
                     # Prevent the player from turning back on itself
-                    if x_dir != -transform_component.vel_x or y_dir != -transform_component.vel_y:
-                        transform_component.vel_x = x_dir
-                        transform_component.vel_y = y_dir
+                    if x_dir != -physics_body_component.x_dir or y_dir != -physics_body_component.y_dir:
+                        physics_body_component.x_dir = x_dir
+                        physics_body_component.y_dir = y_dir
