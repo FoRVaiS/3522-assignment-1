@@ -38,13 +38,17 @@ class RenderingSystem(System):
 
 
 class MovementSystem(System):
+    def __init__(self, scale_factor: int, component_types: List[Type[Component]]):
+        super().__init__(component_types)
+        self.scale_factor = scale_factor
+
     def process(self, game_objects: List[GameObject]) -> None:
         for entity in self._filter_objects(game_objects):
             transform_component = entity.get_component(TransformComponent)
 
             if transform_component:
-                transform_component.x += transform_component.vel_x * transform_component.width
-                transform_component.y += transform_component.vel_y * transform_component.height
+                transform_component.x += transform_component.vel_x * self.scale_factor
+                transform_component.y += transform_component.vel_y * self.scale_factor
 
 
 class AiFollowSystem(System):

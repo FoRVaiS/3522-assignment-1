@@ -51,7 +51,7 @@ class Game:
 
         self.rendering_system = RenderingSystem(screen, [TransformComponent, RenderComponent])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [PlayerControllerComponent, TransformComponent])
-        self.movement_system = MovementSystem([TransformComponent])
+        self.movement_system = MovementSystem(32, [TransformComponent])
         self.follow_system = AiFollowSystem([AiFollowComponent, TransformComponent])
 
         self.start()
