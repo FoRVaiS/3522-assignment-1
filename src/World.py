@@ -1,11 +1,20 @@
 from typing import List
 
-from GameObject import GameObject
+from Component import PlayerControllerComponent
+from GameObject import GameObject, Snake, Food
 
 
 class World:
     def __init__(self) -> None:
         self.game_objects: List[GameObject] = []
+
+        self.player = Snake(length=0)
+        self.player.add_component(PlayerControllerComponent())
+        for segment in self.player.get_segments():
+            self.add_game_object(segment)
+
+        self.food = Food(128, 128)
+        self.add_game_object(self.food)
 
     def add_game_object(self, game_object: GameObject) -> None:
         """

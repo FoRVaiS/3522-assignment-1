@@ -12,7 +12,6 @@ from Window import Window
 from World import World
 from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem
 from Component import SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
-from GameObject import Snake, Food
 
 
 def current_milli_time() -> float:
@@ -43,14 +42,6 @@ class Game:
         screen = self.window.get_surface()
 
         self.world = World()
-
-        self.player = Snake(length=2)
-        self.player.add_component(PlayerControllerComponent())
-        for segment in self.player.get_segments():
-            self.world.add_game_object(segment)
-
-        self.food = Food(128, 128)
-        self.world.add_game_object(self.food)
 
         self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent], [TransformComponent, FoodSpriteComponent]])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
