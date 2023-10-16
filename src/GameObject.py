@@ -2,7 +2,7 @@ from typing import Dict, Type, TypeVar, Optional, List
 from abc import ABC
 
 # Types
-from Component import Component, TransformComponent, RenderComponent, AiFollowComponent
+from Component import Component, TransformComponent, AiFollowComponent, SnakeSpriteComponent
 
 ComponentType = TypeVar("ComponentType", bound=Component)
 
@@ -42,8 +42,8 @@ class Entity(GameObject):
 class Snake(Entity):
     def __init__(self, length: int) -> None:
         super().__init__(0, 0, 32, 32)
-        self.render_component = RenderComponent(self.transform_component.width, self.transform_component.height)
-        self.add_component(self.render_component)
+        self.sprite_component = SnakeSpriteComponent(self.transform_component.width, self.transform_component.height)
+        self.add_component(self.sprite_component)
 
         self._segments = [self]
         self._tail = self

@@ -5,7 +5,7 @@ import pygame
 
 from PygameEventManager import PygameEventManager
 from GameObject import GameObject
-from Component import Component, RenderComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
+from Component import Component, SnakeSpriteComponent, TransformComponent, PlayerControllerComponent, AiFollowComponent
 
 
 class System(ABC):
@@ -31,7 +31,7 @@ class RenderingSystem(System):
     def process(self, game_objects: List[GameObject]) -> None:
         for entity in self._filter_objects(game_objects):
             transform_component = entity.get_component(TransformComponent)
-            render_component = entity.get_component(RenderComponent)
+            render_component = entity.get_component(SnakeSpriteComponent)
 
             if transform_component and render_component:
                 x, y = transform_component.x, transform_component.y
