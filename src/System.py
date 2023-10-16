@@ -9,15 +9,16 @@ from Component import Component, RenderComponent, TransformComponent, PlayerCont
 
 
 class System(ABC):
-    def __init__(self, component_types: List[Type[Component]]):
-        self.component_types = component_types
+    def __init__(self, component_lists: List[List[Type[Component]]]):
+        self.component_lists = component_lists
 
     def _filter_objects(self, game_objects: List[GameObject]) -> List[GameObject]:
         filtered_entities = []
 
         for entity in game_objects:
-            if all(isinstance(entity.get_component(component_type), component_type) for component_type in self.component_types):
-                filtered_entities.append(entity)
+            for component_list in self.component_lists:
+                if all(isinstance(entity.get_component(component), component) for component in component_list):
+                    filtered_entities.append(entity)
 
         return filtered_entities
 
