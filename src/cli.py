@@ -15,7 +15,7 @@ def parse() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=CLI_DESC)
     parser.add_argument("--width", type=str, default="900", help="The width of the game window.")
     parser.add_argument("--height", type=str, default="600", help="The height of the game window.")
-    parser.add_argument("--tickrate", type=str, default="64", help="The number of times to update the game per second.")
+    parser.add_argument("--tickrate", type=str, default="7", help="The number of times to update the game per second.")
 
     return parser.parse_args()
 
