@@ -91,12 +91,12 @@ class Game:
         self.movement_system.process(objects)
         self.follow_system.process(objects)
         self.collisions_system.process(objects)
-        self.rendering_system.process(objects)
 
         surface = self.window.get_surface()
         game_status = self.state.get_state("status")
 
         if game_status == "in-game":
+            self.rendering_system.process(objects)
             self.ui.render_score(surface, 10, 10, self.state.get_state("score"))
         elif game_status == "game-over":
             self.ui.render_game_over(surface, self.width / 2, self.height / 2)
