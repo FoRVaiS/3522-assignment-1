@@ -42,10 +42,11 @@ class RenderingSystem(System):
 
 
 class MovementSystem(System):
-    def __init__(self, grid: Grid, component_lists: List[List[Type[Component]]]):
+    def __init__(self, x_offset: int, y_offset: int, scale_factor: int, component_lists: List[List[Type[Component]]]):
         super().__init__(component_lists)
-        self.grid = grid
-        self.scale_factor = grid.get_cell_size()
+        self.x_offset = x_offset
+        self.y_offset = y_offset
+        self.scale_factor = scale_factor
 
     def process(self, game_objects: List[GameObject]) -> None:
         for entity in self._filter_objects(game_objects):
@@ -59,9 +60,8 @@ class MovementSystem(System):
                 next_cell_x = current_cell_x + physics_body_component.x_dir
                 next_cell_y = current_cell_y + physics_body_component.y_dir
 
-                transform_component.x = next_cell_x * self.scale_factor + self.grid.get_x_offset()
-                transform_component.y = next_cell_y * self.scale_factor + self.grid.get_y_offset()
-
+                transform_component.x = next_cell_x * self.scale_factor + self.x_offset
+                transform_component.y = next_cell_y * self.scale_factor + self.y_offset
 
 
 class AiFollowSystem(System):
