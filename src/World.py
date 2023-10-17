@@ -15,8 +15,7 @@ class World:
 
         self.player = Snake(length=0)
         self.player.add_component(PlayerControllerComponent())
-        for segment in self.player.get_segments():
-            self.add_game_object(segment)
+        self.add_game_object(self.player)
 
         player_phys_body = self.player.get_component(PhysicsBodyComponent)
 
