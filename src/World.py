@@ -11,7 +11,11 @@ class World:
         self.game_objects: List[GameObject] = []
         self.state = state
 
-        event_system = EventSystem(self)
+        self.start()
+
+    def start(self):
+        self.reset_state()
+        event_system = EventSystem(self, self.state)
 
         self.player = Snake(length=0)
         self.player.add_component(PlayerControllerComponent())
@@ -22,8 +26,11 @@ class World:
         if player_phys_body:
             player_phys_body.add_collision_handler(Food, lambda food: event_system.on_eat_food(self.player, food))
 
-        self.food = Food(128, 128)
-        self.add_game_object(self.food)
+        self.add_game_object(Food(128, 128))
+
+    def reset(self):
+        self.game_objects.clear()
+        self.start()
 
     def reset_state(self):
         self.state.set_state("score", 0)
