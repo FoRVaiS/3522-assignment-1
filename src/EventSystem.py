@@ -1,5 +1,6 @@
-from GameObject import Food
 import random
+
+from GameObject import Food
 
 
 class EventSystem:
@@ -7,14 +8,14 @@ class EventSystem:
         self.world = world
         self.state = state
 
-    def on_eat_food(self, snake, game_object) -> None:
-        self.world.remove_game_object(game_object)
+    def on_eat_food(self, snake, food) -> None:
+        self.world.remove_game_object(food)
 
         x = random.randrange(0, 400, 32)
 
         # Spawn more food
-        food = Food(x, x)
-        self.world.add_game_object(food)
+        newFood = Food(x, x)
+        self.world.add_game_object(newFood)
 
         # Add a segment to the snake
         segment = snake.add_segment()
