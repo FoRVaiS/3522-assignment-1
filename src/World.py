@@ -3,11 +3,13 @@ from typing import List
 from Component import PlayerControllerComponent, PhysicsBodyComponent
 from GameObject import GameObject, Snake, Food
 from EventSystem import EventSystem
+from GameStateManager import GameStateManager
 
 
 class World:
-    def __init__(self) -> None:
+    def __init__(self, state: GameStateManager) -> None:
         self.game_objects: List[GameObject] = []
+        self.state = state
 
         event_system = EventSystem(self)
 
@@ -23,6 +25,9 @@ class World:
 
         self.food = Food(128, 128)
         self.add_game_object(self.food)
+
+    def reset_state(self):
+        self.state.set_state("score", 0)
 
     def add_game_object(self, game_object: GameObject) -> None:
         """

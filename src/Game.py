@@ -7,6 +7,7 @@ from math import floor
 
 import pygame
 
+from GameStateManager import GameStateManager
 from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
@@ -41,7 +42,9 @@ class Game:
 
         screen = self.window.get_surface()
 
-        self.world = World()
+        self.state = GameStateManager()
+
+        self.world = World(self.state)
 
         self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent], [TransformComponent, FoodSpriteComponent]])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
