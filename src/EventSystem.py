@@ -7,7 +7,7 @@ class EventSystem:
         self.world = world
         self.state = state
 
-    def on_eat_food(self, game_object) -> None:
+    def on_eat_food(self, snake, game_object) -> None:
         self.world.remove_game_object(game_object)
 
         x = random.randrange(0, 400, 32)
@@ -15,6 +15,10 @@ class EventSystem:
         # Spawn more food
         food = Food(x, x)
         self.world.add_game_object(food)
+
+        # Add a segment to the snake
+        segment = snake.add_segment()
+        self.world.add_game_object(segment)
 
         # Update the player's score
         self.state.set_state("score", int(self.state.get_state("score")) + 1)

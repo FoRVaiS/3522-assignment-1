@@ -20,7 +20,7 @@ class World:
         player_phys_body = self.player.get_component(PhysicsBodyComponent)
 
         if player_phys_body:
-            player_phys_body.add_collision_handler(Food, event_system.on_eat_food)
+            player_phys_body.add_collision_handler(Food, lambda food: event_system.on_eat_food(self.player, food))
 
         self.food = Food(128, 128)
         self.add_game_object(self.food)
