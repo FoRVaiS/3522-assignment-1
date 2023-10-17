@@ -1,12 +1,14 @@
 from typing import List, Type, Dict
 from abc import ABC
+import random
 
 import pygame
 
 from PygameEventManager import PygameEventManager
-from GameObject import GameObject
+from GameObject import GameObject, Food
 from Component import Component, BoxSpriteComponent, CircleSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
 from Grid import Grid
+from World import World
 
 
 class System(ABC):
@@ -139,6 +141,42 @@ class KeyboardInputSystem(System):
                     if x_dir != -physics_body_component.x_dir or y_dir != -physics_body_component.y_dir:
                         physics_body_component.x_dir = x_dir
                         physics_body_component.y_dir = y_dir
+
+
+class FoodSpawnSystem(System):
+    def __init__(self, grid: Grid, world: World, component_lists: List[List[Type[Component]]]):
+        super().__init__(component_lists)
+        self.grid = grid
+        self.world = world
+
+    def process(self, game_objects: List[GameObject]) -> None:
+        still_has_food = False
+
+        for entity in game_objects:
+            if isinstance(entity, Food):
+                still_has_food = True
+                break
+
+        if not still_has_food:
+            rows = self.grid.get_num_rows()
+            columns = self.grid.get_num_cols()
+            cell_size = self.grid.get_cell_size()
+            grid_x, grid_y = self.grid.get_x_offset(), self.grid.get_y_offset()
+            grid = self.grid.get_grid()
+
+            empty_cells = [
+                (x, y)
+                for x in range(columns)
+                for y in range(rows)
+                if grid[x][y] is None
+            ]
+
+            # Pick a random empty cell
+            x, y = random.choice(empty_cells)
+
+            # Spawn food
+            food = Food(x * cell_size + grid_x, y * cell_size + grid_y)
+            self.world.add_game_object(food)
 
 
 class CollisionSystem(System):

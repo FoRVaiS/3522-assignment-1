@@ -33,10 +33,6 @@ class World:
             player_phys_body.add_collision_handler(Snake, lambda snake: self.defeat())
             player_phys_body.add_collision_handler(Wall, lambda wall: self.defeat())
 
-        # Spawn food
-        self.food = Food(128, 128)
-        self.add_game_object(self.food)
-
         # Spawn walls around the perimeter of the grid
         for x in range(self.grid.get_num_cols()):
             min_y = 0
