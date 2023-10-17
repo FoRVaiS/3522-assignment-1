@@ -11,6 +11,7 @@ from GameStateManager import GameStateManager
 from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
+from Grid import Grid
 from UI import UI
 from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem
 from Component import SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
@@ -35,6 +36,8 @@ class Game:
         self.height = height
         self.tickrate = tickrate
 
+        pixels_to_unit = 32
+
         pygame.init()
         self.pg_event_manager = PygameEventManager()
 
@@ -46,12 +49,16 @@ class Game:
         self.state = GameStateManager()
         self.ui = UI()
 
-        self.world = World(self.state)
+        grid_x = int((width - (width // pixels_to_unit) * pixels_to_unit) / 2)
+        grid_y = int((height - (height // pixels_to_unit) * pixels_to_unit) / 2)
+        self.grid = Grid(grid_x, grid_y, width, height, pixels_to_unit)
+
+        self.world = World(self.grid, self.state)
         self.pg_event_manager.subscribe(pygame.KEYDOWN, lambda event: self.world.reset() if event.key == pygame.K_r else None)
 
         self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent], [TransformComponent, FoodSpriteComponent]])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
-        self.movement_system = MovementSystem(32, [[TransformComponent, PhysicsBodyComponent]])
+        self.movement_system = MovementSystem(self.grid, [[TransformComponent, PhysicsBodyComponent]])
         self.collisions_system = CollisionSystem([[PhysicsBodyComponent, TransformComponent]])
 
         self.follow_system = AiFollowSystem([[AiFollowComponent, TransformComponent]])
@@ -76,6 +83,8 @@ class Game:
         Update the game every tick.
         """
         objects = self.world.get_game_objects()
+
+        self.grid.clear_all()
 
         self.movement_system.process(objects)
         self.follow_system.process(objects)

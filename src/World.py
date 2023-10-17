@@ -4,18 +4,20 @@ from Component import PlayerControllerComponent, PhysicsBodyComponent
 from GameObject import GameObject, Snake, Food
 from EventSystem import EventSystem
 from GameStateManager import GameStateManager
+from Grid import Grid
 
 
 class World:
-    def __init__(self, state: GameStateManager) -> None:
+    def __init__(self, grid: Grid, state: GameStateManager) -> None:
         self.game_objects: List[GameObject] = []
         self.state = state
+        self.grid = grid
 
         self.start()
 
     def start(self):
         self.reset_state()
-        event_system = EventSystem(self, self.state)
+        event_system = EventSystem(self, self.grid, self.state)
 
         self.player = Snake(length=0)
         self.player.add_component(PlayerControllerComponent())

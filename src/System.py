@@ -6,6 +6,7 @@ import pygame
 from PygameEventManager import PygameEventManager
 from GameObject import GameObject
 from Component import Component, SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
+from Grid import Grid
 
 
 class System(ABC):
@@ -39,9 +40,10 @@ class RenderingSystem(System):
 
 
 class MovementSystem(System):
-    def __init__(self, scale_factor: int, component_lists: List[List[Type[Component]]]):
+    def __init__(self, grid: Grid, component_lists: List[List[Type[Component]]]):
         super().__init__(component_lists)
-        self.scale_factor = scale_factor
+        self.grid = grid
+        self.scale_factor = grid.get_cell_size()
 
     def process(self, game_objects: List[GameObject]) -> None:
         for entity in self._filter_objects(game_objects):
@@ -49,11 +51,16 @@ class MovementSystem(System):
             physics_body_component = entity.get_component(PhysicsBodyComponent)
 
             if transform_component and physics_body_component:
-                physics_body_component.vel_x = physics_body_component.x_dir * self.scale_factor
-                physics_body_component.vel_y = physics_body_component.y_dir * self.scale_factor
+                current_cell_x = int(transform_component.x // self.scale_factor)
+                current_cell_y = int(transform_component.y // self.scale_factor)
 
-                transform_component.x += physics_body_component.vel_x
-                transform_component.y += physics_body_component.vel_y
+                next_cell_x = current_cell_x + physics_body_component.x_dir
+                next_cell_y = current_cell_y + physics_body_component.y_dir
+
+                transform_component.x = next_cell_x * self.scale_factor + self.grid.get_x_offset()
+                transform_component.y = next_cell_y * self.scale_factor + self.grid.get_y_offset()
+
+                self.grid.add_cell(next_cell_x, next_cell_y, entity)
 
 
 class AiFollowSystem(System):
