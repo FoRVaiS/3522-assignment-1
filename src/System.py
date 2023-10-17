@@ -139,6 +139,48 @@ class AiFollowSystem(System):
                     follower_physics_body_component.y_dir = y_dir
 
 
+class PlayerControllerSystem(System):
+    def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Update the state of an entity based on keyboard inputs.
+
+        :param game_objects: The list of game objects to update.
+        """
+        for entity in self._filter_objects(game_objects):
+            controller = entity.get_component(PlayerControllerComponent)
+            physics_body_component = entity.get_component(PhysicsBodyComponent)
+
+            if controller:
+                keyCode = controller.key
+
+                if keyCode == -1:
+                    continue
+
+                last_x_dir, last_y_dir = physics_body_component.x_dir, physics_body_component.y_dir
+                x_dir, y_dir = 0, 0
+
+                if keyCode == pygame.K_w:
+                    y_dir += -1
+
+                if keyCode == pygame.K_s:
+                    y_dir += 1
+
+                if keyCode == pygame.K_a:
+                    x_dir += -1
+
+                if keyCode == pygame.K_d:
+                    x_dir += 1
+
+                if x_dir == 0 and y_dir == 0:
+                    x_dir = max(min(last_x_dir, 1), -1)
+                    y_dir = max(min(last_y_dir, 1), -1)
+
+                # Prevent the player from turning back on itself
+                if x_dir != -physics_body_component.x_dir or y_dir != -physics_body_component.y_dir:
+                    physics_body_component.x_dir = x_dir
+                    physics_body_component.y_dir = y_dir
+
+
 class KeyboardInputSystem(System):
     def __init__(self, event_manager: PygameEventManager, component_lists: List[List[Type[Component]]]):
         """
@@ -183,32 +225,9 @@ class KeyboardInputSystem(System):
         for keyCode in self._keyMap.keys():
             for entity in self._filter_objects(game_objects):
                 controller = entity.get_component(PlayerControllerComponent)
-                physics_body_component = entity.get_component(PhysicsBodyComponent)
 
-                if controller and physics_body_component:
-                    last_x_dir, last_y_dir = physics_body_component.x_dir, physics_body_component.y_dir
-                    x_dir, y_dir = 0, 0
-
-                    if keyCode == pygame.K_w:
-                        y_dir += -1
-
-                    if keyCode == pygame.K_s:
-                        y_dir += 1
-
-                    if keyCode == pygame.K_a:
-                        x_dir += -1
-
-                    if keyCode == pygame.K_d:
-                        x_dir += 1
-
-                    if x_dir == 0 and y_dir == 0:
-                        x_dir = max(min(last_x_dir, 1), -1)
-                        y_dir = max(min(last_y_dir, 1), -1)
-
-                    # Prevent the player from turning back on itself
-                    if x_dir != -physics_body_component.x_dir or y_dir != -physics_body_component.y_dir:
-                        physics_body_component.x_dir = x_dir
-                        physics_body_component.y_dir = y_dir
+                if controller:
+                    controller.key = keyCode
 
 
 class FoodSpawnSystem(System):

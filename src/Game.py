@@ -13,7 +13,7 @@ from Window import Window
 from World import World
 from Grid import Grid
 from UI import UI
-from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem, FoodSpawnSystem, GridObjectSystem
+from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem, FoodSpawnSystem, GridObjectSystem, PlayerControllerSystem
 from Component import BoxSpriteComponent, CircleSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
 
 
@@ -64,6 +64,7 @@ class Game:
         self._food_spawn_system = FoodSpawnSystem(self._grid, self._world, [])
         self._grid_object_system = GridObjectSystem(self._grid, [[TransformComponent]])
         self._rendering_system = RenderingSystem(self._window.get_surface(), [[TransformComponent, BoxSpriteComponent], [TransformComponent, CircleSpriteComponent]])
+        self._player_controller_system = PlayerControllerSystem([[PlayerControllerComponent, PhysicsBodyComponent]])
         self._keyboard_input_system = KeyboardInputSystem(self._pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
         self._movement_system = MovementSystem(grid_x, grid_y, pixels_to_unit, [[TransformComponent, PhysicsBodyComponent]])
         self._collisions_system = CollisionSystem([[PhysicsBodyComponent, TransformComponent]])
@@ -95,6 +96,7 @@ class Game:
 
         self._grid_object_system.process(objects)
         self._food_spawn_system.process(objects)
+        self._player_controller_system.process(objects)
         self._movement_system.process(objects)
         self._follow_system.process(objects)
         self._collisions_system.process(objects)

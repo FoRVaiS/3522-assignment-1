@@ -249,7 +249,24 @@ class PhysicsBodyComponent(Component):
 
 
 class PlayerControllerComponent(Component):
-    pass
+    def __init__(self):
+        """
+        Create a new PlayerControllerComponent.
+        """
+        self._key = -1
+
+    @property
+    def key(self) -> int:
+        return self._key
+
+    @key.setter
+    def key(self, value: int) -> None:
+        """
+        Set the key.
+
+        :param value: The new key.
+        """
+        self._key = value
 
 
 class AiFollowComponent(Component):
