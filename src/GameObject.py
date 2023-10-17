@@ -44,7 +44,7 @@ class Entity(GameObject):
 
 class Snake(Entity):
     def __init__(self, length: int) -> None:
-        super().__init__(0, 0, 32, 32)
+        super().__init__(0, 0, 31, 31)
         self.sprite_component = SnakeSpriteComponent(self.transform_component.width, self.transform_component.height)
         self.add_component(self.sprite_component)
 
