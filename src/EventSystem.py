@@ -26,3 +26,4 @@ class EventSystem:
 
     def on_eat_snake(self, snake) -> None:
         self.world.get_game_objects().clear()
+        self.state.set_state("status", "game-over")

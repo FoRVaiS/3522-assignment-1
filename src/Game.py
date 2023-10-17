@@ -11,6 +11,7 @@ from GameStateManager import GameStateManager
 from PygameEventManager import PygameEventManager
 from Window import Window
 from World import World
+from UI import UI
 from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem
 from Component import SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
 
@@ -43,6 +44,7 @@ class Game:
         screen = self.window.get_surface()
 
         self.state = GameStateManager()
+        self.ui = UI()
 
         self.world = World(self.state)
         self.pg_event_manager.subscribe(pygame.KEYDOWN, lambda event: self.world.reset() if event.key == pygame.K_r else None)
@@ -79,6 +81,15 @@ class Game:
         self.follow_system.process(objects)
         self.collisions_system.process(objects)
         self.rendering_system.process(objects)
+
+        surface = self.window.get_surface()
+        game_status = self.state.get_state("status")
+
+        if game_status == "in-game":
+            self.ui.render_score(surface, 10, 10, self.state.get_state("score"))
+        elif game_status == "game-over":
+            self.ui.render_game_over(surface, self.width / 2, self.height / 2)
+
         self.window.update()
 
     def onImmediateUpdate(self) -> None:

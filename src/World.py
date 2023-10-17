@@ -35,6 +35,7 @@ class World:
 
     def reset_state(self):
         self.state.set_state("score", 0)
+        self.state.set_state("status", "in-game")
 
     def add_game_object(self, game_object: GameObject) -> None:
         """
