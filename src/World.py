@@ -44,7 +44,7 @@ class World:
             self.add_game_object(top_wall)
             self.add_game_object(bottom_wall)
 
-        for y in range(self.grid.get_num_rows()):
+        for y in range(1, self.grid.get_num_rows() - 1):
             min_x = 0
             max_x = self.grid.get_num_cols() - 1
 
