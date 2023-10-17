@@ -1,7 +1,7 @@
 from typing import List
 
 from Component import PlayerControllerComponent, PhysicsBodyComponent
-from GameObject import GameObject, Snake, Food
+from GameObject import GameObject, Snake, Food, Wall
 from EventSystem import EventSystem
 from GameStateManager import GameStateManager
 from Grid import Grid
@@ -31,8 +31,32 @@ class World:
         if player_phys_body:
             player_phys_body.add_collision_handler(Food, lambda food: event_system.on_eat_food(self.player, food))
             player_phys_body.add_collision_handler(Snake, lambda snake: self.defeat())
+            player_phys_body.add_collision_handler(Wall, lambda wall: self.defeat())
 
-        self.add_game_object(Food(128, 128))
+        # Spawn food
+        self.food = Food(128, 128)
+        self.add_game_object(self.food)
+
+        # Spawn walls around the perimeter of the grid
+        for x in range(self.grid.get_num_cols()):
+            min_y = 0
+            max_y = self.grid.get_num_rows() - 1
+
+            top_wall = Wall(x * cell_size, min_y, cell_size, cell_size)
+            bottom_wall = Wall(x * cell_size, max_y * cell_size, cell_size, cell_size)
+
+            self.add_game_object(top_wall)
+            self.add_game_object(bottom_wall)
+
+        for y in range(self.grid.get_num_rows()):
+            min_x = 0
+            max_x = self.grid.get_num_cols() - 1
+
+            left_wall = Wall(min_x, y * cell_size, cell_size, cell_size)
+            right_wall = Wall(max_x * cell_size, y * cell_size, cell_size, cell_size)
+
+            self.add_game_object(left_wall)
+            self.add_game_object(right_wall)
 
     def defeat(self):
         self.game_objects.clear()

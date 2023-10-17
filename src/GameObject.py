@@ -75,3 +75,10 @@ class Food(Entity):
         super().__init__(x, y, 32, 32)
         self.sprite_component = CircleSpriteComponent(radius=8, color=(255, 0, 0))
         self.add_component(self.sprite_component)
+
+
+class Wall(Entity):
+    def __init__(self, x: int, y: int, width: int, height: int) -> None:
+        super().__init__(x, y, width, height)
+        self.sprite_component = BoxSpriteComponent(self.transform_component.width, self.transform_component.height, color=(50, 50, 50), outline=False)
+        self.add_component(self.sprite_component)
