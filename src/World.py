@@ -27,7 +27,7 @@ class World:
 
         if player_phys_body:
             player_phys_body.add_collision_handler(Food, lambda food: event_system.on_eat_food(self.player, food))
-            player_phys_body.add_collision_handler(Snake, lambda snake: event_system.on_eat_snake(self.player))
+            player_phys_body.add_collision_handler(Snake, lambda snake: self.defeat())
 
         self.add_game_object(Food(128, 128))
 

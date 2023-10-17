@@ -24,6 +24,3 @@ class EventSystem:
 
         # Update the player's score
         self.state.set_state("score", int(self.state.get_state("score")) + 1)
-
-    def on_eat_snake(self, snake) -> None:
-        self.world.defeat()
