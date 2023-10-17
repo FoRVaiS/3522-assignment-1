@@ -39,36 +39,36 @@ class Game:
         :param height: The height of the game window.
         :param tickrate: The number of times to update the game per second.
         """
-        self.width = width
-        self.height = height
-        self.tickrate = tickrate
+        self._width = width
+        self._height = height
+        self._tickrate = tickrate
 
         pixels_to_unit = 32
 
         pygame.init()
-        self.pg_event_manager = PygameEventManager()
+        self._pg_event_manager = PygameEventManager()
 
-        self.window = Window(width, height)
-        self.pg_event_manager.subscribe(pygame.QUIT, lambda event: self.stop())
+        self._window = Window(width, height)
+        self._pg_event_manager.subscribe(pygame.QUIT, lambda event: self.stop())
 
-        self.state = GameStateManager()
-        self.ui = UI()
+        self._state = GameStateManager()
+        self._ui = UI()
 
         grid_x = int((width - (width // pixels_to_unit) * pixels_to_unit) / 2)
         grid_y = int((height - (height // pixels_to_unit) * pixels_to_unit) / 2)
-        self.grid = Grid(grid_x, grid_y, width, height, pixels_to_unit)
+        self._grid = Grid(grid_x, grid_y, width, height, pixels_to_unit)
 
-        self.world = World(self.grid, self.state)
-        self.pg_event_manager.subscribe(pygame.KEYDOWN, lambda event: self.world.reset() if event.key == pygame.K_r else None)
+        self._world = World(self._grid, self._state)
+        self._pg_event_manager.subscribe(pygame.KEYDOWN, lambda event: self._world.reset() if event.key == pygame.K_r else None)
 
-        self.food_spawn_system = FoodSpawnSystem(self.grid, self.world, [])
-        self.grid_object_system = GridObjectSystem(self.grid, [[TransformComponent]])
-        self.rendering_system = RenderingSystem(self.window.get_surface(), [[TransformComponent, BoxSpriteComponent], [TransformComponent, CircleSpriteComponent]])
-        self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
-        self.movement_system = MovementSystem(grid_x, grid_y, pixels_to_unit, [[TransformComponent, PhysicsBodyComponent]])
-        self.collisions_system = CollisionSystem([[PhysicsBodyComponent, TransformComponent]])
+        self._food_spawn_system = FoodSpawnSystem(self._grid, self._world, [])
+        self._grid_object_system = GridObjectSystem(self._grid, [[TransformComponent]])
+        self._rendering_system = RenderingSystem(self._window.get_surface(), [[TransformComponent, BoxSpriteComponent], [TransformComponent, CircleSpriteComponent]])
+        self._keyboard_input_system = KeyboardInputSystem(self._pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
+        self._movement_system = MovementSystem(grid_x, grid_y, pixels_to_unit, [[TransformComponent, PhysicsBodyComponent]])
+        self._collisions_system = CollisionSystem([[PhysicsBodyComponent, TransformComponent]])
 
-        self.follow_system = AiFollowSystem([[AiFollowComponent, TransformComponent]])
+        self._follow_system = AiFollowSystem([[AiFollowComponent, TransformComponent]])
 
         self.start()
         self.loop(tickrate)
@@ -77,47 +77,47 @@ class Game:
         """
         Start the game.
         """
-        self.isRunning = True
+        self._isRunning = True
 
     def stop(self) -> None:
         """
         Stop the game.
         """
-        self.isRunning = False
+        self._isRunning = False
 
     def onTick(self) -> None:
         """
         Update the game every tick.
         """
-        objects = self.world.get_game_objects()
+        objects = self._world.get_game_objects()
 
-        self.grid.clear_all()
+        self._grid.clear_all()
 
-        self.grid_object_system.process(objects)
-        self.food_spawn_system.process(objects)
-        self.movement_system.process(objects)
-        self.follow_system.process(objects)
-        self.collisions_system.process(objects)
+        self._grid_object_system.process(objects)
+        self._food_spawn_system.process(objects)
+        self._movement_system.process(objects)
+        self._follow_system.process(objects)
+        self._collisions_system.process(objects)
 
-        surface = self.window.get_surface()
-        game_status: str = self.state.get_state("status")
+        surface = self._window.get_surface()
+        game_status: str = self._state.get_state("status")
 
         if game_status == "in-game":
-            self.rendering_system.process(objects)
-            self.ui.render_score(surface, 8, int((self.grid.get_cell_size() - 20) / 2 + self.grid.get_y_offset()), int(self.state.get_state("score") or 0))
+            self._rendering_system.process(objects)
+            self._ui.render_score(surface, 8, int((self._grid.get_cell_size() - 20) / 2 + self._grid.get_y_offset()), int(self._state.get_state("score") or 0))
         elif game_status == "game-over":
-            self.ui.render_game_over(surface, int(self.width / 2), int(self.height / 2))
+            self._ui.render_game_over(surface, int(self._width / 2), int(self._height / 2))
 
-        self.window.update()
+        self._window.update()
 
     def onImmediateUpdate(self) -> None:
         """
         Run an update immediately.
         """
-        objects = self.world.get_game_objects()
+        objects = self._world.get_game_objects()
 
-        self.keyboard_input_system.process(objects)
-        self.pg_event_manager.update()
+        self._keyboard_input_system.process(objects)
+        self._pg_event_manager.update()
 
     def loop(self, tickrate: int) -> None:
         """
@@ -131,7 +131,7 @@ class Game:
 
         self.onTick()
 
-        while (self.isRunning):
+        while (self._isRunning):
             self.onImmediateUpdate()
 
             now = current_milli_time()

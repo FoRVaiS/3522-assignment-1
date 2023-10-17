@@ -18,10 +18,10 @@ class BoxSpriteComponent(Component):
         :param color: The color of the square.
         :param outline: Whether or not to draw an outline around the square.
         """
-        self.width = width
-        self.height = height
-        self.color = color
-        self.outline = outline
+        self._width = width
+        self._height = height
+        self._color = color
+        self._outline = outline
 
     def draw(self, screen: pygame.Surface, x: int, y: int) -> None:
         """
@@ -31,10 +31,10 @@ class BoxSpriteComponent(Component):
         :param x: The x position of the square.
         :param y: The y position of the square.
         """
-        square_rect = pygame.Rect(x, y, self.width, self.height)
+        square_rect = pygame.Rect(x, y, self._width, self._height)
 
         # Draw the square on the screen with the specified color
-        pygame.draw.rect(screen, self.color, square_rect, self.outline)
+        pygame.draw.rect(screen, self._color, square_rect, self._outline)
 
 
 class CircleSpriteComponent(Component):
@@ -45,8 +45,8 @@ class CircleSpriteComponent(Component):
         :param radius: The radius of the circle.
         :param color: The color of the circle.
         """
-        self.radius = radius
-        self.color = color
+        self._radius = radius
+        self._color = color
 
     def draw(self, screen: pygame.Surface, x: int, y: int) -> None:
         """
@@ -56,7 +56,7 @@ class CircleSpriteComponent(Component):
         :param x: The x position of the circle.
         :param y: The y position of the circle.
         """
-        pygame.draw.circle(screen, self.color, (x + self.radius * 2, y + self.radius * 2), radius=self.radius)
+        pygame.draw.circle(screen, self._color, (x + self._radius * 2, y + self._radius * 2), radius=self._radius)
 
 
 class TransformComponent(Component):
@@ -69,10 +69,82 @@ class TransformComponent(Component):
         :param width: The width of the game object.
         :param height: The height of the game object.
         """
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
+
+    @property
+    def x(self) -> int:
+        """
+        Get the x position.
+
+        :return: The x position.
+        """
+        return self._x
+
+    @x.setter
+    def x(self, value: int) -> None:
+        """
+        Set the x position.
+
+        :param value: The new x position.
+        """
+        self._x = value
+
+    @property
+    def y(self) -> int:
+        """
+        Get the y position.
+
+        :return: The y position.
+        """
+        return self._y
+
+    @y.setter
+    def y(self, value: int) -> None:
+        """
+        Set the y position.
+
+        :param value: The new y position.
+        """
+        self._y = value
+
+    @property
+    def width(self) -> int:
+        """
+        Get the width.
+
+        :return: The width.
+        """
+        return self._width
+
+    @width.setter
+    def width(self, value: int) -> None:
+        """
+        Set the width.
+
+        :param value: The new width.
+        """
+        self._width = value
+
+    @property
+    def height(self) -> int:
+        """
+        Get the height.
+
+        :return: The height.
+        """
+        return self._height
+
+    @height.setter
+    def height(self, value: int) -> None:
+        """
+        Set the height.
+
+        :param value: The new height.
+        """
+        self._height = value
 
 
 class PhysicsBodyComponent(Component):
@@ -80,12 +152,84 @@ class PhysicsBodyComponent(Component):
         """
         Create a new PhysicsBodyComponent.
         """
-        self.vel_x = 0
-        self.vel_y = 0
-        self.x_dir = 0
-        self.y_dir = 0
+        self._vel_x = 0
+        self._vel_y = 0
+        self._x_dir = 0
+        self._y_dir = 0
 
-        self.handlers = {}
+        self._handlers = {}
+
+    @property
+    def vel_x(self) -> int:
+        """
+        Get the velocity in the x-direction.
+
+        :return: The velocity in the x-direction.
+        """
+        return self._vel_x
+
+    @vel_x.setter
+    def vel_x(self, value: int) -> None:
+        """
+        Set the velocity in the x-direction.
+
+        :param value: The new velocity in the x-direction.
+        """
+        self._vel_x = value
+
+    @property
+    def vel_y(self) -> int:
+        """
+        Get the velocity in the y-direction.
+
+        :return: The velocity in the y-direction.
+        """
+        return self._vel_y
+
+    @vel_y.setter
+    def vel_y(self, value: int) -> None:
+        """
+        Set the velocity in the y-direction.
+
+        :param value: The new velocity in the y-direction.
+        """
+        self._vel_y = value
+
+    @property
+    def x_dir(self) -> int:
+        """
+        Get the x-direction.
+
+        :return: The x-direction.
+        """
+        return self._x_dir
+
+    @x_dir.setter
+    def x_dir(self, value: int) -> None:
+        """
+        Set the x-direction.
+
+        :param value: The new x-direction.
+        """
+        self._x_dir = value
+
+    @property
+    def y_dir(self) -> int:
+        """
+        Get the y-direction.
+
+        :return: The y-direction.
+        """
+        return self._y_dir
+
+    @y_dir.setter
+    def y_dir(self, value: int) -> None:
+        """
+        Set the y-direction.
+
+        :param value: The new y-direction.
+        """
+        self._y_dir = value
 
     def add_collision_handler(self, game_object_type, handler) -> None:
         """
@@ -94,13 +238,13 @@ class PhysicsBodyComponent(Component):
         :param game_object_type: The type of game object to handle collisions for.
         :param handler: The collision handler.
         """
-        if self.handlers.get(game_object_type) is None:
-            self.handlers[game_object_type] = []
-        self.handlers[game_object_type].append(handler)
+        if self._handlers.get(game_object_type) is None:
+            self._handlers[game_object_type] = []
+        self._handlers[game_object_type].append(handler)
 
     def on_collision(self, game_object) -> None:
-        if self.handlers.get(type(game_object)) is not None:
-            for handler in self.handlers[type(game_object)]:
+        if self._handlers.get(type(game_object)) is not None:
+            for handler in self._handlers[type(game_object)]:
                 handler(game_object)
 
 
@@ -115,7 +259,7 @@ class AiFollowComponent(Component):
 
         :param game_object: The game object to follow.
         """
-        self.target = game_object
+        self._target = game_object
 
     def get_target(self):
         """
@@ -123,4 +267,4 @@ class AiFollowComponent(Component):
 
         :return: The game object to follow.
         """
-        return self.target
+        return self._target

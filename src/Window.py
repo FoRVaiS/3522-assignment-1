@@ -17,12 +17,12 @@ class Window:
         :param width: The width of the window.
         :param height: The height of the window.
         """
-        self.width = width
-        self.height = height
+        self._width = width
+        self._height = height
 
-        self.window = pygame.display.set_mode((width, height))
+        self._window = pygame.display.set_mode((width, height))
 
-        self.events: List[Tuple[int, Callable[[pygame.event.Event], None]]] = []
+        self._events: List[Tuple[int, Callable[[pygame.event.Event], None]]] = []
 
     def registerEvent(self, pygameEvent: int, callback: Callable[[pygame.event.Event], None]) -> None:
         """
@@ -31,7 +31,7 @@ class Window:
         :param pygameEvent: The pygame event to register.
         :param callback: The callback to call when the event occurs.
         """
-        self.events.append((pygameEvent, callback))
+        self._events.append((pygameEvent, callback))
 
     def update(self) -> None:
         """
@@ -41,7 +41,7 @@ class Window:
         pygame.display.update()
 
         # Clear the game window
-        self.window.fill((0, 0, 0))
+        self._window.fill((0, 0, 0))
 
     def get_surface(self) -> pygame.Surface:
         """
@@ -49,4 +49,4 @@ class Window:
 
         :return: The surface of the game window.
         """
-        return self.window
+        return self._window

@@ -12,7 +12,7 @@ class PygameEventManager:
         The PygameEventManager is responsible for managing events by offering
         an observer api.
         """
-        self.event_handlers: Dict[int, List[Callable[[Event], None]]] = {}
+        self._event_handlers: Dict[int, List[Callable[[Event], None]]] = {}
 
     def subscribe(self, event_type: int, handler: Callable[[Event], None]) -> None:
         """
@@ -21,9 +21,9 @@ class PygameEventManager:
         :param event_type: The type of event to subscribe to.
         :param handler: The handler to subscribe.
         """
-        if event_type not in self.event_handlers:
-            self.event_handlers[event_type] = []
-        self.event_handlers[event_type].append(handler)
+        if event_type not in self._event_handlers:
+            self._event_handlers[event_type] = []
+        self._event_handlers[event_type].append(handler)
 
     def unsubscribe(self, event_type: int, handler: Callable[[Event], None]) -> None:
         """
@@ -32,8 +32,8 @@ class PygameEventManager:
         :param event_type: The type of event to unsubscribe from.
         :param handler: The handler to unsubscribe.
         """
-        if event_type in self.event_handlers and handler in self.event_handlers[event_type]:
-            self.event_handlers[event_type].remove(handler)
+        if event_type in self._event_handlers and handler in self._event_handlers[event_type]:
+            self._event_handlers[event_type].remove(handler)
 
     def notify(self, event_type: int, event: Event) -> None:
         """
@@ -42,8 +42,8 @@ class PygameEventManager:
         :param event_type: The type of event to notify handlers for.
         :param event: The event to notify handlers with.
         """
-        if event_type in self.event_handlers:
-            for handler in self.event_handlers[event_type]:
+        if event_type in self._event_handlers:
+            for handler in self._event_handlers[event_type]:
                 handler(event)
 
     def update(self) -> None:

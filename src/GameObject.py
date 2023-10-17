@@ -15,7 +15,7 @@ class GameObject(ABC):
         :param x: The x position of the game object.
         :param y: The y position of the game object.
         """
-        self.components: Dict[Type[Component], Component] = {}
+        self._components: Dict[Type[Component], Component] = {}
 
     def add_component(self, component: Component) -> None:
         """
@@ -23,7 +23,7 @@ class GameObject(ABC):
 
         :param component: The component to add.
         """
-        self.components[type(component)] = component
+        self._components[type(component)] = component
 
     def get_component(self, component: Type[ComponentType]) -> Optional[ComponentType]:
         """
@@ -32,7 +32,7 @@ class GameObject(ABC):
         :param component: The type of component to get.
         :return: The component if it exists, otherwise None.
         """
-        _component = self.components.get(component)
+        _component = self._components.get(component)
 
         # This is a hack to get around the fact that mypy doesn't behave well
         # with this particular generic use-case:
@@ -49,8 +49,8 @@ class GameObject(ABC):
 
         :param component: The type of component to remove.
         """
-        if component in self.components:
-            del self.components[component]
+        if component in self._components:
+            del self._components[component]
 
 
 class Entity(GameObject):
@@ -65,13 +65,13 @@ class Entity(GameObject):
         :param width: The width of the entity.
         :param height: The height of the entity.
         """
-        self.components: Dict[Type[Component], Component] = {}
+        self._components: Dict[Type[Component], Component] = {}
 
-        self.transform_component = TransformComponent(x, y, width - 1, height - 1)
-        self.add_component(self.transform_component)
+        self._transform_component = TransformComponent(x, y, width - 1, height - 1)
+        self.add_component(self._transform_component)
 
-        self.physics_body_component = PhysicsBodyComponent()
-        self.add_component(self.physics_body_component)
+        self._physics_body_component = PhysicsBodyComponent()
+        self.add_component(self._physics_body_component)
 
 
 class Snake(Entity):
@@ -84,8 +84,8 @@ class Snake(Entity):
         :param length: The default length of the snake.
         """
         super().__init__(x, y, 31, 31)
-        self.sprite_component = BoxSpriteComponent(self.transform_component.width, self.transform_component.height, color=(255, 255, 255), outline=True)
-        self.add_component(self.sprite_component)
+        self._sprite_component = BoxSpriteComponent(self._transform_component.width, self._transform_component._height, color=(255, 255, 255), outline=True)
+        self.add_component(self._sprite_component)
 
         self._segments = [self]
         self._tail = self
@@ -99,8 +99,8 @@ class Snake(Entity):
 
         :return: The new segment.
         """
-        x = self._tail.transform_component.x
-        y = self._tail.transform_component.y
+        x = self._tail._transform_component.x
+        y = self._tail._transform_component.y
 
         segment = Snake(x, y, 0)
         segment.add_component(AiFollowComponent(self._tail))
@@ -128,8 +128,8 @@ class Food(Entity):
         :param y: The y position of the food.
         """
         super().__init__(x, y, 32, 32)
-        self.sprite_component = CircleSpriteComponent(radius=8, color=(255, 0, 0))
-        self.add_component(self.sprite_component)
+        self._sprite_component = CircleSpriteComponent(radius=8, color=(255, 0, 0))
+        self.add_component(self._sprite_component)
 
 
 class Wall(Entity):
@@ -143,5 +143,5 @@ class Wall(Entity):
         :param height: The height of the wall.
         """
         super().__init__(x, y, width, height)
-        self.sprite_component = BoxSpriteComponent(self.transform_component.width, self.transform_component.height, color=(50, 50, 50), outline=False)
-        self.add_component(self.sprite_component)
+        self._sprite_component = BoxSpriteComponent(self._transform_component.width, self._transform_component._height, color=(50, 50, 50), outline=False)
+        self.add_component(self._sprite_component)

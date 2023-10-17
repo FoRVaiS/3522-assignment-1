@@ -18,7 +18,7 @@ class System(ABC):
 
         :param component_lists: A list of lists of components that the system requires before processing occurs.
         """
-        self.component_lists = component_lists
+        self._component_lists = component_lists
 
     def _filter_objects(self, game_objects: List[GameObject]) -> List[GameObject]:
         """
@@ -30,7 +30,7 @@ class System(ABC):
         filtered_entities = []
 
         for entity in game_objects:
-            for component_list in self.component_lists:
+            for component_list in self._component_lists:
                 if all(isinstance(entity.get_component(component), component) for component in component_list):
                     filtered_entities.append(entity)
 
@@ -49,7 +49,7 @@ class RenderingSystem(System):
         :param component_lists: A list of lists of components that the system requires before processing occurs.
         """
         super().__init__(component_lists)
-        self.screen = screen
+        self._screen = screen
 
     def process(self, game_objects: List[GameObject]) -> None:
         """
@@ -63,7 +63,7 @@ class RenderingSystem(System):
 
             if transform_component and render_component:
                 x, y = transform_component.x, transform_component.y
-                render_component.draw(self.screen, x, y)
+                render_component.draw(self._screen, x, y)
 
 
 class MovementSystem(System):
@@ -85,9 +85,9 @@ class MovementSystem(System):
         :param component_lists: A list of lists of components that the system requires before processing occurs.
         """
         super().__init__(component_lists)
-        self.x_offset = x_offset
-        self.y_offset = y_offset
-        self.scale_factor = scale_factor
+        self._x_offset = x_offset
+        self._y_offset = y_offset
+        self._scale_factor = scale_factor
 
     def process(self, game_objects: List[GameObject]) -> None:
         """
@@ -100,14 +100,14 @@ class MovementSystem(System):
             physics_body_component = entity.get_component(PhysicsBodyComponent)
 
             if transform_component and physics_body_component:
-                current_cell_x = int(transform_component.x // self.scale_factor)
-                current_cell_y = int(transform_component.y // self.scale_factor)
+                current_cell_x = int(transform_component.x // self._scale_factor)
+                current_cell_y = int(transform_component.y // self._scale_factor)
 
                 next_cell_x = current_cell_x + physics_body_component.x_dir
                 next_cell_y = current_cell_y + physics_body_component.y_dir
 
-                transform_component.x = next_cell_x * self.scale_factor + self.x_offset
-                transform_component.y = next_cell_y * self.scale_factor + self.y_offset
+                transform_component.x = next_cell_x * self._scale_factor + self._x_offset
+                transform_component.y = next_cell_y * self._scale_factor + self._y_offset
 
 
 class AiFollowSystem(System):
@@ -118,7 +118,7 @@ class AiFollowSystem(System):
         for entity in self._filter_objects(game_objects):
             ai_component = entity.get_component(AiFollowComponent)
 
-            if ai_component and ai_component.target:
+            if ai_component and ai_component._target:
 
                 follower_physics_body_component = entity.get_component(PhysicsBodyComponent)
                 follower_transform_component = entity.get_component(TransformComponent)
@@ -153,7 +153,7 @@ class KeyboardInputSystem(System):
         super().__init__(component_lists)
 
         # Tracks all keys that are currently pressed
-        self.keyMap: Dict[int, bool] = {}
+        self._keyMap: Dict[int, bool] = {}
 
         event_manager.subscribe(pygame.KEYDOWN, self.on_keydown)
         event_manager.subscribe(pygame.KEYUP, self.on_keyup)
@@ -164,7 +164,7 @@ class KeyboardInputSystem(System):
         """
         keyCode = event.key
 
-        self.keyMap[keyCode] = True
+        self._keyMap[keyCode] = True
 
     def on_keyup(self, event: pygame.event.Event) -> None:
         """
@@ -172,7 +172,7 @@ class KeyboardInputSystem(System):
         """
         keyCode = event.key
 
-        del self.keyMap[keyCode]
+        del self._keyMap[keyCode]
 
     def process(self, game_objects: List[GameObject]) -> None:
         """
@@ -180,7 +180,7 @@ class KeyboardInputSystem(System):
 
         :param game_objects: The list of game objects to update.
         """
-        for keyCode in self.keyMap.keys():
+        for keyCode in self._keyMap.keys():
             for entity in self._filter_objects(game_objects):
                 controller = entity.get_component(PlayerControllerComponent)
                 physics_body_component = entity.get_component(PhysicsBodyComponent)
@@ -218,8 +218,8 @@ class FoodSpawnSystem(System):
         :param component_lists: A list of lists of components that the system requires before processing occurs.
         """
         super().__init__(component_lists)
-        self.grid = grid
-        self.world = world
+        self._grid = grid
+        self._world = world
 
     def process(self, game_objects: List[GameObject]) -> None:
         """
@@ -235,11 +235,11 @@ class FoodSpawnSystem(System):
                 break
 
         if not still_has_food:
-            rows = self.grid.get_num_rows()
-            columns = self.grid.get_num_cols()
-            cell_size = self.grid.get_cell_size()
-            grid_x, grid_y = self.grid.get_x_offset(), self.grid.get_y_offset()
-            grid = self.grid.get_grid()
+            rows = self._grid.get_num_rows()
+            columns = self._grid.get_num_cols()
+            cell_size = self._grid.get_cell_size()
+            grid_x, grid_y = self._grid.get_x_offset(), self._grid.get_y_offset()
+            grid = self._grid.get_grid()
 
             empty_cells = [
                 (x, y)
@@ -253,7 +253,7 @@ class FoodSpawnSystem(System):
 
             # Spawn food
             food = Food(x * cell_size + grid_x, y * cell_size + grid_y)
-            self.world.add_game_object(food)
+            self._world.add_game_object(food)
 
 
 class GridObjectSystem(System):
@@ -267,7 +267,7 @@ class GridObjectSystem(System):
         :param component_lists: A list of lists of components that the system requires before processing occurs.
         """
         super().__init__(component_lists)
-        self.grid = grid
+        self._grid = grid
 
     def process(self, game_objects: List[GameObject]) -> None:
         """
@@ -280,25 +280,19 @@ class GridObjectSystem(System):
 
             if transform_component:
                 x, y = transform_component.x, transform_component.y
-                cell_size = self.grid.get_cell_size()
+                cell_size = self._grid.get_cell_size()
 
                 cell_x = int(x // cell_size)
                 cell_y = int(y // cell_size)
 
-                self.grid.add_cell(cell_x, cell_y, entity)
+                self._grid.add_cell(cell_x, cell_y, entity)
 
 
 class CollisionSystem(System):
-    def __init__(self, component_lists: List[List[Type[Component]]]):
-        """
-        Create a new collision system.
-
-        The collision system is responsible for detecting collisions between game objects and triggering
-        the on_collision methods on their physics body components.
-
-        :param component_lists: A list of lists of components that the system requires before processing occurs.
-        """
-        super().__init__(component_lists)
+    """
+    The collision system is responsible for detecting collisions between game objects and triggering
+    the on_collision methods on their physics body components.
+    """
 
     def detect_x_collision(self, entTransform: TransformComponent, otherTransform: TransformComponent) -> bool:
         """
