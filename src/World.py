@@ -31,6 +31,10 @@ class World:
 
         self.add_game_object(Food(128, 128))
 
+    def defeat(self):
+        self.game_objects.clear()
+        self.state.set_state("status", "game-over")
+
     def reset(self):
         self.game_objects.clear()
         self.start()
