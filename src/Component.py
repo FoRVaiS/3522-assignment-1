@@ -62,3 +62,6 @@ class PlayerControllerComponent(Component):
 class AiFollowComponent(Component):
     def __init__(self, game_object) -> None:
         self.target = game_object
+
+    def get_target(self):
+        return self.target

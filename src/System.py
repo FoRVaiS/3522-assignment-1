@@ -64,7 +64,7 @@ class AiFollowSystem(System):
             if ai_component and ai_component.target:
                 follower_physics_body_component = entity.get_component(PhysicsBodyComponent)
                 follower_transform_component = entity.get_component(TransformComponent)
-                target_transform_component = ai_component.target.get_component(TransformComponent)
+                target_transform_component = ai_component.get_target().get_component(TransformComponent)
 
                 if follower_transform_component and target_transform_component and follower_physics_body_component:
                     # Get the follower coordinates
