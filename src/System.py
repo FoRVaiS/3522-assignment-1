@@ -227,7 +227,6 @@ class CollisionSystem(System):
         index ahead of the base index once the base index has incremented.
         """
         possible_collisions = self.partition(game_objects)
-        print("Possible collisions:", possible_collisions)
 
         for x_group in possible_collisions:
             for base_index in range(len(x_group) - 1):
