@@ -14,7 +14,7 @@ from World import World
 from Grid import Grid
 from UI import UI
 from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem
-from Component import SnakeSpriteComponent, FoodSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
+from Component import BoxSpriteComponent, CircleSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
 
 
 def current_milli_time() -> float:
@@ -44,8 +44,6 @@ class Game:
         self.window = Window(width, height)
         self.pg_event_manager.subscribe(pygame.QUIT, lambda event: self.stop())
 
-        screen = self.window.get_surface()
-
         self.state = GameStateManager()
         self.ui = UI()
 
@@ -56,7 +54,7 @@ class Game:
         self.world = World(self.grid, self.state)
         self.pg_event_manager.subscribe(pygame.KEYDOWN, lambda event: self.world.reset() if event.key == pygame.K_r else None)
 
-        self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent], [TransformComponent, FoodSpriteComponent]])
+        self.rendering_system = RenderingSystem(self.window.get_surface(), [[TransformComponent, BoxSpriteComponent], [TransformComponent, CircleSpriteComponent]])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
         self.movement_system = MovementSystem(self.grid, [[TransformComponent, PhysicsBodyComponent]])
         self.collisions_system = CollisionSystem([[PhysicsBodyComponent, TransformComponent]])

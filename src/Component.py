@@ -1,3 +1,4 @@
+from typing import Tuple
 from abc import ABC
 
 import pygame
@@ -7,24 +8,27 @@ class Component(ABC):
     pass
 
 
-class SnakeSpriteComponent(Component):
-    def __init__(self, width: int, height: int):
+class BoxSpriteComponent(Component):
+    def __init__(self, width: int, height: int, color: Tuple = (255, 255, 255), outline: bool = False) -> None:
         self.width = width
         self.height = height
+        self.color = color
+        self.outline = outline
 
     def draw(self, screen: pygame.Surface, x: int, y: int) -> None:
         square_rect = pygame.Rect(x, y, self.width, self.height)
 
         # Draw the square on the screen with the specified color
-        pygame.draw.rect(screen, (255, 255, 255), square_rect, 1)
+        pygame.draw.rect(screen, self.color, square_rect, self.outline)
 
 
-class FoodSpriteComponent(Component):
-    def __init__(self, radius: int):
+class CircleSpriteComponent(Component):
+    def __init__(self, radius: int, color: Tuple = (255, 255, 255)):
         self.radius = radius
+        self.color = color
 
     def draw(self, screen: pygame.Surface, x: int, y: int) -> None:
-        pygame.draw.circle(screen, (255, 0, 0), (x + self.radius * 2, y + self.radius * 2), radius=self.radius)
+        pygame.draw.circle(screen, self.color, (x + self.radius * 2, y + self.radius * 2), radius=self.radius)
 
 
 class TransformComponent(Component):

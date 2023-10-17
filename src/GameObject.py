@@ -2,7 +2,7 @@ from typing import Dict, Type, TypeVar, Optional, List
 from abc import ABC
 
 # Types
-from Component import Component, TransformComponent, PhysicsBodyComponent, AiFollowComponent, SnakeSpriteComponent, FoodSpriteComponent
+from Component import Component, TransformComponent, PhysicsBodyComponent, AiFollowComponent, BoxSpriteComponent, CircleSpriteComponent
 
 ComponentType = TypeVar("ComponentType", bound=Component)
 
@@ -45,7 +45,7 @@ class Entity(GameObject):
 class Snake(Entity):
     def __init__(self, length: int) -> None:
         super().__init__(0, 0, 31, 31)
-        self.sprite_component = SnakeSpriteComponent(self.transform_component.width, self.transform_component.height)
+        self.sprite_component = BoxSpriteComponent(self.transform_component.width, self.transform_component.height, color=(255, 255, 255), outline=True)
         self.add_component(self.sprite_component)
 
         self._segments = [self]
@@ -72,5 +72,5 @@ class Snake(Entity):
 class Food(Entity):
     def __init__(self, x: int, y: int) -> None:
         super().__init__(x, y, 32, 32)
-        self.sprite_component = FoodSpriteComponent(8)
+        self.sprite_component = CircleSpriteComponent(radius=8, color=(255, 0, 0))
         self.add_component(self.sprite_component)
