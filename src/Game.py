@@ -13,7 +13,7 @@ from Window import Window
 from World import World
 from Grid import Grid
 from UI import UI
-from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem, FoodSpawnSystem
+from System import RenderingSystem, KeyboardInputSystem, MovementSystem, AiFollowSystem, CollisionSystem, FoodSpawnSystem, GridObjectSystem
 from Component import BoxSpriteComponent, CircleSpriteComponent, TransformComponent, PhysicsBodyComponent, PlayerControllerComponent, AiFollowComponent
 
 
@@ -55,6 +55,7 @@ class Game:
         self.pg_event_manager.subscribe(pygame.KEYDOWN, lambda event: self.world.reset() if event.key == pygame.K_r else None)
 
         self.food_spawn_system = FoodSpawnSystem(self.grid, self.world, [])
+        self.grid_object_system = GridObjectSystem(self.grid, [[TransformComponent]])
         self.rendering_system = RenderingSystem(self.window.get_surface(), [[TransformComponent, BoxSpriteComponent], [TransformComponent, CircleSpriteComponent]])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
         self.movement_system = MovementSystem(self.grid, [[TransformComponent, PhysicsBodyComponent]])
@@ -85,6 +86,7 @@ class Game:
 
         self.grid.clear_all()
 
+        self.grid_object_system.process(objects)
         self.food_spawn_system.process(objects)
         self.movement_system.process(objects)
         self.follow_system.process(objects)

@@ -62,7 +62,6 @@ class MovementSystem(System):
                 transform_component.x = next_cell_x * self.scale_factor + self.grid.get_x_offset()
                 transform_component.y = next_cell_y * self.scale_factor + self.grid.get_y_offset()
 
-                self.grid.add_cell(next_cell_x, next_cell_y, entity)
 
 
 class AiFollowSystem(System):
@@ -177,6 +176,25 @@ class FoodSpawnSystem(System):
             # Spawn food
             food = Food(x * cell_size + grid_x, y * cell_size + grid_y)
             self.world.add_game_object(food)
+
+
+class GridObjectSystem(System):
+    def __init__(self, grid: Grid, component_lists: List[List[Type[Component]]]):
+        super().__init__(component_lists)
+        self.grid = grid
+
+    def process(self, game_objects: List[GameObject]):
+        for entity in self._filter_objects(game_objects):
+            transform_component = entity.get_component(TransformComponent)
+
+            if transform_component:
+                x, y = transform_component.x, transform_component.y
+                cell_size = self.grid.get_cell_size()
+
+                cell_x = int(x // cell_size)
+                cell_y = int(y // cell_size)
+
+                self.grid.add_cell(cell_x, cell_y, entity)
 
 
 class CollisionSystem(System):
