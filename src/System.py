@@ -186,6 +186,7 @@ class KeyboardInputSystem(System):
                 physics_body_component = entity.get_component(PhysicsBodyComponent)
 
                 if controller and physics_body_component:
+                    last_x_dir, last_y_dir = physics_body_component.x_dir, physics_body_component.y_dir
                     x_dir, y_dir = 0, 0
 
                     if keyCode == pygame.K_w:
@@ -199,6 +200,10 @@ class KeyboardInputSystem(System):
 
                     if keyCode == pygame.K_d:
                         x_dir += 1
+
+                    if x_dir == 0 and y_dir == 0:
+                        x_dir = max(min(last_x_dir, 1), -1)
+                        y_dir = max(min(last_y_dir, 1), -1)
 
                     # Prevent the player from turning back on itself
                     if x_dir != -physics_body_component.x_dir or y_dir != -physics_body_component.y_dir:
