@@ -97,7 +97,7 @@ class Game:
 
         if game_status == "in-game":
             self.rendering_system.process(objects)
-            self.ui.render_score(surface, 10, 10, self.state.get_state("score"))
+            self.ui.render_score(surface, 8, (self.grid.get_cell_size() - 20) / 2 + self.grid.get_y_offset(), self.state.get_state("score"))
         elif game_status == "game-over":
             self.ui.render_game_over(surface, self.width / 2, self.height / 2)
 
