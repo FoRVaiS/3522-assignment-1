@@ -43,8 +43,8 @@ class Entity(GameObject):
 
 
 class Snake(Entity):
-    def __init__(self, length: int) -> None:
-        super().__init__(0, 0, 31, 31)
+    def __init__(self, x: int, y: int, length: int) -> None:
+        super().__init__(x, y, 31, 31)
         self.sprite_component = BoxSpriteComponent(self.transform_component.width, self.transform_component.height, color=(255, 255, 255), outline=True)
         self.add_component(self.sprite_component)
 
@@ -55,9 +55,10 @@ class Snake(Entity):
             self.add_segment()
 
     def add_segment(self) -> 'Snake':
-        segment = Snake(0)
-        segment.transform_component.x = self._tail.transform_component.x
-        segment.transform_component.y = self._tail.transform_component.y
+        x = self._tail.transform_component.x
+        y = self._tail.transform_component.y
+
+        segment = Snake(x, y, 0)
         segment.add_component(AiFollowComponent(self._tail))
 
         self._segments.append(segment)

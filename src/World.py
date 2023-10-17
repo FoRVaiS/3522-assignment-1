@@ -19,7 +19,10 @@ class World:
         self.reset_state()
         event_system = EventSystem(self, self.grid, self.state)
 
-        self.player = Snake(length=0)
+        cell_size = self.grid.get_cell_size()
+
+        # Spawn a player
+        self.player = Snake(cell_size, cell_size, length=0)
         self.player.add_component(PlayerControllerComponent())
         self.add_game_object(self.player)
 
