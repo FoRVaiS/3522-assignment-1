@@ -13,9 +13,20 @@ from World import World
 
 class System(ABC):
     def __init__(self, component_lists: List[List[Type[Component]]]):
+        """
+        Create a new system.
+
+        :param component_lists: A list of lists of components that the system requires before processing occurs.
+        """
         self.component_lists = component_lists
 
     def _filter_objects(self, game_objects: List[GameObject]) -> List[GameObject]:
+        """
+        Filter a list of game objects by the components they have.
+
+        :param game_objects: The list of game objects to filter.
+        :return: A list of game objects guaranteed to have the required components.
+        """
         filtered_entities = []
 
         for entity in game_objects:
@@ -28,10 +39,24 @@ class System(ABC):
 
 class RenderingSystem(System):
     def __init__(self, screen: pygame.Surface, component_lists: List[List[Type[Component]]]):
+        """
+        Create a new rendering system.
+
+        The rendering system is responsible for rendering all the sprites of game objects based on their
+        transform_component and sprite_component.
+
+        :param screen: The screen to render to.
+        :param component_lists: A list of lists of components that the system requires before processing occurs.
+        """
         super().__init__(component_lists)
         self.screen = screen
 
     def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Render all game objects that are drawable or renderable to the screen.
+
+        :param game_objects: The list of game objects to render.
+        """
         for entity in self._filter_objects(game_objects):
             transform_component = entity.get_component(TransformComponent)
             render_component = entity.get_component(BoxSpriteComponent) or entity.get_component(CircleSpriteComponent)
@@ -43,12 +68,33 @@ class RenderingSystem(System):
 
 class MovementSystem(System):
     def __init__(self, x_offset: int, y_offset: int, scale_factor: int, component_lists: List[List[Type[Component]]]):
+        """
+        Create a new movement system.
+
+        The movement system is responsible for updating the position of all game objects that have a
+        transform_component and physics_body_component.
+
+        The physics_body_component is responsible for determining the direction and speed of the game object but
+        the movement system is responsible for updating the position component of the game object.
+
+        For this particular game, the MovementSystem is specially designed to move along a grid.
+
+        :param x_offset: The x offset of the grid.
+        :param y_offset: The y offset of the grid.
+        :param scale_factor: The size of a single cell in the grid.
+        :param component_lists: A list of lists of components that the system requires before processing occurs.
+        """
         super().__init__(component_lists)
         self.x_offset = x_offset
         self.y_offset = y_offset
         self.scale_factor = scale_factor
 
     def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Update the position of all game objects that are movable.
+
+        :param game_objects: The list of game objects to update.
+        """
         for entity in self._filter_objects(game_objects):
             transform_component = entity.get_component(TransformComponent)
             physics_body_component = entity.get_component(PhysicsBodyComponent)
@@ -66,10 +112,14 @@ class MovementSystem(System):
 
 class AiFollowSystem(System):
     def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Update the direction of all game objects that are meant to follow another game object.
+        """
         for entity in self._filter_objects(game_objects):
             ai_component = entity.get_component(AiFollowComponent)
 
             if ai_component and ai_component.target:
+
                 follower_physics_body_component = entity.get_component(PhysicsBodyComponent)
                 follower_transform_component = entity.get_component(TransformComponent)
                 target_transform_component = ai_component.get_target().get_component(TransformComponent)
@@ -91,6 +141,15 @@ class AiFollowSystem(System):
 
 class KeyboardInputSystem(System):
     def __init__(self, event_manager: PygameEventManager, component_lists: List[List[Type[Component]]]):
+        """
+        Create a new keyboard input system.
+
+        The keyboard input system is responsible for updating the direction of the player based on the keys
+        that are currently pressed.
+
+        :param event_manager: The event manager to subscribe to.
+        :param component_lists: A list of lists of components that the system requires before processing occurs.
+        """
         super().__init__(component_lists)
 
         # Tracks all keys that are currently pressed
@@ -116,6 +175,11 @@ class KeyboardInputSystem(System):
         del self.keyMap[keyCode]
 
     def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Update the direction of the player based on the keys that are currently pressed.
+
+        :param game_objects: The list of game objects to update.
+        """
         for keyCode in self.keyMap.keys():
             for entity in self._filter_objects(game_objects):
                 controller = entity.get_component(PlayerControllerComponent)
@@ -144,11 +208,25 @@ class KeyboardInputSystem(System):
 
 class FoodSpawnSystem(System):
     def __init__(self, grid: Grid, world: World, component_lists: List[List[Type[Component]]]):
+        """
+        Create a new food spawn system.
+
+        The food spawn system is responsible for spawning food when there is no food left on the grid.
+
+        :param grid: The grid to spawn food on.
+        :param world: The world to spawn food in.
+        :param component_lists: A list of lists of components that the system requires before processing occurs.
+        """
         super().__init__(component_lists)
         self.grid = grid
         self.world = world
 
     def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Spawn food when there is no food left on the grid.
+
+        :param game_objects: The list of game objects to find a food object from.
+        """
         still_has_food = False
 
         for entity in game_objects:
@@ -180,10 +258,23 @@ class FoodSpawnSystem(System):
 
 class GridObjectSystem(System):
     def __init__(self, grid: Grid, component_lists: List[List[Type[Component]]]):
+        """
+        Create a new grid object system.
+
+        The grid object system is responsible for adding game objects to the grid.
+
+        :param grid: The grid to add game objects to.
+        :param component_lists: A list of lists of components that the system requires before processing occurs.
+        """
         super().__init__(component_lists)
         self.grid = grid
 
-    def process(self, game_objects: List[GameObject]):
+    def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Add game objects to the grid if they have a set of position coordinates.
+
+        :param game_objects: The list of game objects to add to the grid.
+        """
         for entity in self._filter_objects(game_objects):
             transform_component = entity.get_component(TransformComponent)
 
@@ -199,9 +290,24 @@ class GridObjectSystem(System):
 
 class CollisionSystem(System):
     def __init__(self, component_lists: List[List[Type[Component]]]):
+        """
+        Create a new collision system.
+
+        The collision system is responsible for detecting collisions between game objects and triggering
+        the on_collision methods on their physics body components.
+
+        :param component_lists: A list of lists of components that the system requires before processing occurs.
+        """
         super().__init__(component_lists)
 
-    def detect_x_collision(self, entTransform: GameObject, otherTransform: GameObject) -> bool:
+    def detect_x_collision(self, entTransform: TransformComponent, otherTransform: TransformComponent) -> bool:
+        """
+        Determine if two entities are intersecting on the x axis.
+
+        :param entTransform: The transform component of the first entity.
+        :param otherTransform: The transform component of the second entity.
+        :return: True if the entities are intersecting on the x axis, False otherwise.
+        """
         entX, entWidth = entTransform.x, entTransform.width
         otherX, otherWidth = otherTransform.x, otherTransform.width
 
@@ -211,12 +317,19 @@ class CollisionSystem(System):
         otherEntLeft = otherX
         otherEntRight = otherX + otherWidth
 
-        hasLeftIntersection = entLeft <= otherEntLeft and entLeft >= otherEntLeft
-        hasRightIntersection = entRight <= otherEntRight and entRight >= otherEntRight
+        hasLeftIntersection: bool = entLeft <= otherEntLeft and entLeft >= otherEntLeft
+        hasRightIntersection: bool = entRight <= otherEntRight and entRight >= otherEntRight
 
         return hasLeftIntersection or hasRightIntersection
 
     def detect_y_collision(self, entTransform: TransformComponent, otherTransform: TransformComponent) -> bool:
+        """
+        Determine if two entities are intersecting on the y axis.
+
+        :param entTransform: The transform component of the first entity.
+        :param otherTransform: The transform component of the second entity.
+        :return: True if the entities are intersecting on the y axis, False otherwise.
+        """
         entY, entHeight = entTransform.y, entTransform.height
         otherY, otherHeight = otherTransform.y, otherTransform.height
 
@@ -232,6 +345,15 @@ class CollisionSystem(System):
         return hasTopIntersection or hasBottomIntersection
 
     def partition(self, game_objects: List[GameObject]) -> List[List[GameObject]]:
+        """
+        Partition a list of game objects into a list of lists of game objects that are potentially colliding.
+
+        This partitioning algorithm simply partitions all game objects into groups where every element is intersecting
+        on the x-axis with the game object before or after it.
+
+        :param game_objects: The list of game objects to partition.
+        :return: A list of lists of game objects that are potentially colliding.
+        """
         filtered_entities = self._filter_objects(game_objects)
         filtered_entities.sort(key=lambda entity: entity.get_component(TransformComponent).x)
 
@@ -288,6 +410,8 @@ class CollisionSystem(System):
         - The base index will not increment past the penultimate element.
         - The sub index will iterate through the entire list, resetting to one
         index ahead of the base index once the base index has incremented.
+
+        :param game_objects: The list of game objects to check for collisions.
         """
         possible_collisions = self.partition(game_objects)
 
@@ -304,9 +428,10 @@ class CollisionSystem(System):
                     ent_transform_component = ent.get_component(TransformComponent)
                     other_transform_component = other.get_component(TransformComponent)
 
-                    # Check if the pair of entities are colliding on the y axis ...
-                    if self.detect_y_collision(ent_transform_component, other_transform_component) and ent_phys_body_component and other_phys_body_component:
-                        # ... and if they are, trigger their on_collision methods and pass the entity
-                        # they collided with.
-                        ent_phys_body_component.on_collision(other)
-                        other_phys_body_component.on_collision(ent)
+                    if ent_transform_component and other_transform_component and ent_phys_body_component and other_phys_body_component:
+                        # Check if the pair of entities are colliding on the y axis ...
+                        if self.detect_y_collision(ent_transform_component, other_transform_component):
+                            # ... and if they are, trigger their on_collision methods and pass the entity
+                            # they collided with.
+                            ent_phys_body_component.on_collision(other)
+                            other_phys_body_component.on_collision(ent)

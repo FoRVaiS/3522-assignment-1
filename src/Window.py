@@ -11,6 +11,12 @@ class Window:
     """
 
     def __init__(self, width: int, height: int):
+        """
+        Create a new window.
+
+        :param width: The width of the window.
+        :param height: The height of the window.
+        """
         self.width = width
         self.height = height
 
@@ -21,6 +27,9 @@ class Window:
     def registerEvent(self, pygameEvent: int, callback: Callable[[pygame.event.Event], None]) -> None:
         """
         Register a pygame event.
+
+        :param pygameEvent: The pygame event to register.
+        :param callback: The callback to call when the event occurs.
         """
         self.events.append((pygameEvent, callback))
 
@@ -37,5 +46,7 @@ class Window:
     def get_surface(self) -> pygame.Surface:
         """
         Get the surface of the game window.
+
+        :return: The surface of the game window.
         """
         return self.window

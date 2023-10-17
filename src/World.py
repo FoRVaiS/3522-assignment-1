@@ -9,13 +9,24 @@ from Grid import Grid
 
 class World:
     def __init__(self, grid: Grid, state: GameStateManager) -> None:
+        """
+        Create a new world.
+
+        The world is responsible for managing all game objects and game state.
+
+        :param grid: The grid to use for the world.
+        :param state: The game state to use for the world.
+        """
         self.game_objects: List[GameObject] = []
         self.state = state
         self.grid = grid
 
         self.start()
 
-    def start(self):
+    def start(self) -> None:
+        """
+        Initialize all default game objects and game state.
+        """
         self.reset_state()
         event_system = EventSystem(self, self.grid, self.state)
 
@@ -54,27 +65,40 @@ class World:
             self.add_game_object(left_wall)
             self.add_game_object(right_wall)
 
-    def defeat(self):
+    def defeat(self) -> None:
+        """
+        Trigger the defeated game state.
+        """
         self.game_objects.clear()
         self.state.set_state("status", "game-over")
 
-    def reset(self):
+    def reset(self) -> None:
+        """
+        Reset the game.
+        """
         self.game_objects.clear()
         self.start()
 
-    def reset_state(self):
+    def reset_state(self) -> None:
+        """
+        Reset the game state.
+        """
         self.state.set_state("score", 0)
         self.state.set_state("status", "in-game")
 
     def add_game_object(self, game_object: GameObject) -> None:
         """
         Add a game object to the world.
+
+        :param game_object: The game object to add.
         """
         self.game_objects.append(game_object)
 
     def remove_game_object(self, game_object: GameObject) -> None:
         """
         Remove an game object from the world.
+
+        :param game_object: The game object to remove.
         """
         if game_object in self.game_objects:
             self.game_objects.remove(game_object)
@@ -82,5 +106,7 @@ class World:
     def get_game_objects(self) -> List[GameObject]:
         """
         Get all game objects in the world.
+
+        :return: A list of all game objects in the world.
         """
         return self.game_objects

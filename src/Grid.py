@@ -1,14 +1,25 @@
-from typing import List, Any, Tuple
+from typing import List, Any, Tuple, Optional
+
+from GameObject import GameObject
 
 
 class Grid:
     def __init__(self, x: int, y: int, width: int, height: int, size: int):
+        """
+        Create a new grid.
+
+        :param x: The x offset of the grid.
+        :param y: The y offset of the grid.
+        :param width: The width of the grid.
+        :param height: The height of the grid.
+        :param size: The size of a single cell in the grid.
+        """
         self._x = x
         self._y = y
         self._width = width
         self._height = height
         self._size = size
-        self._grid = [
+        self._grid: List[List[Optional[List[GameObject]]]] = [
             [
                 None
                 for y in range(height // size)

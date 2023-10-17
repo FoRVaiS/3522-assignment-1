@@ -31,7 +31,14 @@ class Game:
     The game class is responsible for managing the game loop and updating the game state.
     """
 
-    def __init__(self, width: int, height: int, tickrate: int):
+    def __init__(self, width: int, height: int, tickrate: int) -> None:
+        """
+        Create a new game.
+
+        :param width: The width of the game window.
+        :param height: The height of the game window.
+        :param tickrate: The number of times to update the game per second.
+        """
         self.width = width
         self.height = height
         self.tickrate = tickrate
@@ -93,13 +100,13 @@ class Game:
         self.collisions_system.process(objects)
 
         surface = self.window.get_surface()
-        game_status = self.state.get_state("status")
+        game_status: str = self.state.get_state("status")
 
         if game_status == "in-game":
             self.rendering_system.process(objects)
-            self.ui.render_score(surface, 8, (self.grid.get_cell_size() - 20) / 2 + self.grid.get_y_offset(), self.state.get_state("score"))
+            self.ui.render_score(surface, 8, int((self.grid.get_cell_size() - 20) / 2 + self.grid.get_y_offset()), int(self.state.get_state("score") or 0))
         elif game_status == "game-over":
-            self.ui.render_game_over(surface, self.width / 2, self.height / 2)
+            self.ui.render_game_over(surface, int(self.width / 2), int(self.height / 2))
 
         self.window.update()
 
