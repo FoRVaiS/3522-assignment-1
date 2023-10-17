@@ -56,6 +56,8 @@ class Snake(Entity):
 
     def add_segment(self) -> 'Snake':
         segment = Snake(0)
+        segment.transform_component.x = self._tail.transform_component.x
+        segment.transform_component.y = self._tail.transform_component.y
         segment.add_component(AiFollowComponent(self._tail))
 
         self._segments.append(segment)
