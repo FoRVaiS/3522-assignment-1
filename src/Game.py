@@ -45,6 +45,7 @@ class Game:
         self.state = GameStateManager()
 
         self.world = World(self.state)
+        self.pg_event_manager.subscribe(pygame.KEYDOWN, lambda event: self.world.reset() if event.key == pygame.K_r else None)
 
         self.rendering_system = RenderingSystem(screen, [[TransformComponent, SnakeSpriteComponent], [TransformComponent, FoodSpriteComponent]])
         self.keyboard_input_system = KeyboardInputSystem(self.pg_event_manager, [[PlayerControllerComponent, PhysicsBodyComponent]])
