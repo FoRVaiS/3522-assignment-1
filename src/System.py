@@ -36,6 +36,14 @@ class System(ABC):
 
         return filtered_entities
 
+    def process(self, game_objects: List[GameObject]) -> None:
+        """
+        Process a list of game objects.
+
+        :param game_objects: The list of game objects to process.
+        """
+        pass
+
 
 class RenderingSystem(System):
     def __init__(self, screen: pygame.Surface, component_lists: List[List[Type[Component]]]):
