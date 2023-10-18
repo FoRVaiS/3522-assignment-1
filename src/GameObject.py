@@ -8,12 +8,9 @@ ComponentType = TypeVar("ComponentType", bound=Component)
 
 
 class GameObject(ABC):
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self) -> None:
         """
         Create a new game object.
-
-        :param x: The x position of the game object.
-        :param y: The y position of the game object.
         """
         self._components: Dict[Type[Component], Component] = {}
 
